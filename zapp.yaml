@@ -8,14 +8,14 @@ profiles:
   - name: dbb-userbuild
     type: dbb
     settings:
-      application: MortgageApplication      
+      application: MortgageApplication   
       #command: "sh . ~/.profile;ls -lsaT $DBB_HOME/groovy/bin; groovy --version ; $DBB_HOME/bin/groovyz"
       command: "$DBB_HOME/bin/groovyz"
       buildScriptPath: "$DBB_HOME/dbb-zappbuild/build.groovy"
       buildScriptArgs:
         - "--userBuild"
         - "--workspace ${zopeneditor.userbuild.userSettings.dbbWorkspace}/${application}"
-        - "--application MortgageApplication
+        - "--application MortgageApplication"
         - "--hlq  DBB.POC"
         - "--outDir  ${zopeneditor.userbuild.userSettings.dbbLogDir}"
       additionalDependencies:
@@ -33,22 +33,4 @@ propertyGroups:
       - name: syslib
         type: local
         locations:
-          - "**/copybook"
-      - name: syslib
-        type: mvs
-        locations:
-          - "IBMUSER.IDZ.COBCOPY"
-      - name: MYLIB
-        type: mvs
-        locations:
-          - IBMUSER.IDZ.COPYLIB
-
-# pl/i include libs 
-  - name: pl1-includes
-    language: pl1
-    compilerOptions: "not(!),margins(2,100)"
-    libraries:
-      - name: syslib
-        type: local
-        locations:
-          - "**/plinc"             
+          - "**/copybok"
