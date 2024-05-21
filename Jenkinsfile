@@ -1,22 +1,20 @@
-// Sample Jenkinsfile using pGH, ssh and a zDT Agent (Nlopez)
+// Sample Jenkinsfile for WaaS POC's (Nlopez)
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
  
 // change these values to match your configuration
-// sample scripts for stock image are @ '/u/ibmuser/dbb-zappbuild/scripts'
+// sample scripts for WaaS stock image are @ '/u/ibmuser/dbb-zappbuild/scripts'
 
-def myAgent  = 'zvsi'
-def repo = 'git@github.com:nlopez1-ibm/poc-workspace.git'
-def Common = "git@github.com:nlopez1-ibm/Common.git"
+def myAgent  = 'yourJenkinsAgent???'
+def repo = 'git@???/MortgageWorkspace.git'
 
 def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
-def appworkspace = 'poc-workspace'
-def appname = 'poc-app'
+def appworkspace = 'MortgageWorkspace'
+def appname = 'MortgageApplication'
 
-//def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/UCD/dbb-ucd-packaging.groovy' 
 def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
 
-def buzTool  = '/u/ibmuser/ibm-ucd/agent/bin/buztool.sh'
-def ucdComponent = 'poc-component'
+def buzTool  = '/u/ibmuser/???/agent/bin/buztool.sh'
+def ucdComponent = '???'
 
 // no changes required to this section 
 pipeline {
@@ -30,9 +28,7 @@ pipeline {
                 script {
                     sh 'rm -rf *'
                     sh 'git clone ' + repo 
-                    sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'
-                    sh 'cd ' + appworkspace  + '; git clone  -b main ' + Common 
-                    
+                    sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'                    
                 }
             }          
         }  
@@ -42,14 +38,11 @@ pipeline {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script {
 
-                    // example to build one program for quick testing is now supported by UCD (skip impact for now)
-                    //sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -h ' + env.USER+'.JENKINS' + ' poc-app/cobol/datbatch.cbl'
-                    
                     // scan  must do a scan on a first run
                     //sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -h ' + env.USER+'.JENKINS' + ' --fullBuild --scanOnly'
                     
                     
-                    // Normal impact Mode  (dbb toolkit build 88+)
+                    // Normal impact Mode
                     sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8   -h ' + env.USER+'.JENKINS' + ' --impactBuild'
                    
                 }
@@ -60,7 +53,7 @@ pipeline {
             steps {
                 println  '** Package and Publish to UCDs CodeStation...'                  
                 script {
-                    // sh 'groovyz ' + ucdPublish + ' --buztool ' + buzTool  + ' --workDir ${WORKSPACE}/'+appworkspace + ' --component ' + ucdComponent + ' --versionName ${BUILD_NUMBER}'
+                   echo "NOP" 
                    //sh  ucdPublish + ' Jenkins_Build_${BUILD_NUMBER} ' + ucdComponent + ' ${WORKSPACE}/'+appworkspace  
                 } 
             }
@@ -69,7 +62,7 @@ pipeline {
     
     post {
             always {
-                echo 'Saving Logs ...'
+                echo 'Saving DBB Build Logs ...'
                 archiveArtifacts artifacts: '**/*.log', fingerprint: false                
                 }
     }        
