@@ -1,0 +1,10 @@
+### SHUtDOWN .GITATT TO SEE CONFIRM ROCKETS POINT THAT ITS NOT NEEDED IN USS (NJL)
+# line endings
+#* text eol=lf
+
+# file encodings
+** zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
+.gitattributes zos-working-tree-encoding=iso8859-1 git-encoding=utf-8
+
+# test working tree to support certain chars with utf-8 like x'41'
+**.cbl		text working-tree-encoding=UTF-8 
