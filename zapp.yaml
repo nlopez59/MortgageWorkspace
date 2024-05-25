@@ -17,7 +17,8 @@ profiles:
       #buildScriptPath: "$DBB_HOME/dbb-zappbuild/build.groovy"
 
       #WaaS Stock newcopy hook
-      #command: "sh . /etc/profile; '/u/ibmuser/dbb-zappbuild/scripts/cics-newcopy.sh &'; groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT "
+      ### NEED TO SET THE DEFAULT PROFILE TO WaaS STOCK BOX 
+
       command: "echo ***NOTE***    WAAS-MODE  *************; groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "
       buildScriptPath: "/u/ibmuser/dbb-zappbuild/build.groovy"
       
