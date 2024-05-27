@@ -28,8 +28,8 @@ Unfortunately, new stock images may introduce new system libraries that will req
 ### Before Running the Script (PreReqs)
 - Ensure the VSI is running and the z/OS IPL is complete.
 - It is assumed your local SSH key was used to create the VSI. This is needed to access z/OS. 
-- IBM Cloud API keys are pre-configured:
-   - Create an API key from the IBM Cloud UI.
+- IBM Cloud API key is configured on your PC:
+   - Create an API key from the IBM Cloud UI - see imagae below.
    - Set the Windows environment variable `SETX IC_API_Key=???` with your API Key.
 <img src="images/creapi.png" alt="Create an API Key" width="650">
 
@@ -50,6 +50,7 @@ Unfortunately, new stock images may introduce new system libraries that will req
     - 8137-8139 for IDz over RSED STC
     - 8195 for Zowe over RSEAPI 
     - 10443 for Zowe over zOSMF as an alternative to RSEAPI
+  - [The full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
 
 Example Init Script output:    
 <img src="images/initrun.png" alt="Init Script Run" width="700">
