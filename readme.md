@@ -1,7 +1,7 @@
 # DBB Proof of Concept (POC) using IBM WaaS Stock Image  
 
 ## Overview
-This repo contains a sample CICS/DB2 Cobol application and a setup zip to setup a basic z/OS DevOps environment for a POC. 
+This repo contains a sample CICS/DB2 Cobol application and a script to setup a basic z/OS DevOps environment for a POC. 
 Clone this repo, unzip the zip file and run `$initVSI-Stock.bat` in a Windows DOS terminal.
 It will configure the system and the application where you can then run Dev and Test use cases with Git, DBB and other tools. 
 
