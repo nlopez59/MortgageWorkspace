@@ -2,10 +2,10 @@
 
 ## Overview
 This repo contains a sample CICS/DB2 Cobol application and a script to setup a basic z/OS DevOps environment for a POC. 
-Clone this repo, unzip the zip file and run `$initVSI-Stock.bat` in a Windows DOS terminal.
+Clone this repo, and run  [initPOC.bat](Waas_Setup/initPOC.bat) in a Windows DOS terminal.
 It will configure the system and the application where you can then run Dev and Test use cases with Git, DBB and other tools. 
 
-When the script is complete, use the default `IBMUSER` RACF user to log in to CICS and run the sample Transaction ID `EPSP`. 
+When the script complete, use the default `IBMUSER` RACF user to log in to CICS and run the sample Transaction ID `EPSP`. 
 Configure an IDE (IDz or vsCode) and any CI/CD pipeline orchestrator to run DBB based builds and Deploy the app in this repo. 
 
 
@@ -19,8 +19,8 @@ Unfortunately, new stock images may introduce new system libraries that will req
 
 
 ### Why a Windows Batch Script?
-- It does not require and special tools or knowledge like Ansible, Terraform...
-- It is in a zip in this repo.  Just unzip and run. Windows Admin rights will be needed during the z/OS Certificate install step. 
+- Small and simple. Does not require and special tools or knowledge like Ansible, Terraform...
+- Windows Admin rights will be needed during the z/OS Certificate install step. 
 - If the prerequisites below are all in place, it will create a working demo of the sample IBM MortgageApplication.
 - IBM’ers with access to create a WaaS instance can use this for testing and learning.
 - Customers with access to a pre-provisioned WaaS Instance can follow these same steps as part of a POC.
@@ -65,8 +65,11 @@ CEDA Display of sample App's group (EPSMTM):
 <img src="images/ceda1.png" alt="CEDA DI G(EPSMTM)" width="500">
 
 - The JCL folder has jobs to run DB2 Bind and CICS newcopy.
-  - A newcopy and DB2 bind will be needed for changes to the main program EPSCMORT. 
-  - A newcopy only is needed for the main map EPSMORT. For example, run 'CEMT SET PROG(EPSMORT) NEWCOPY' 
+  - [jcl\newcopy.jcl](jcl\newcopy.jcl) is a newcopy job
+  - [jcl\bind.jcl](jcl\bind.jcl) is the DB2 bind
+  - Changes to the main program EPSCMORT requires a bind
+  - all other pgms and maps just need a newcopy. 
+- 
 - As a test, use IDz or vsCode to change the map and view the results in CICS.  
 - Configure your CD pipeline to automate newcopy and binds. 
     
