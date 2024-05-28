@@ -40,7 +40,7 @@ MortApp is a basic online CICS application made up of several programs:
     <br />   
     
     Example epsmort copybook member
-    <img src="../images/EPSMORT.png" alt="EPSMORT Copybook" width="500">
+    <img src="../images/epsmort.png" alt="EPSMORT Copybook" width="500">
   
     ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the a PDS created during the DBB build of the BMS program. ```
     <br />   
