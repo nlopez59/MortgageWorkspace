@@ -18,7 +18,7 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
 
 The diagram below illustrates the different layers of a mainframe application.  zOS, the operating system is at the bottom and supervises all the work to support program execution and the hardware resources they use (not shown).   Above zOS are the online and batch subsystems.  Other subsystems, like DB2, are common across online and batch applications. The top layer represents mainframe applications. They access subsystem services through an API layer. For example, EPSCMORT accesses CICS services using ['EXEC CICS ...'.](../../MortgageApplication/cobol/epscmort.cbl#90-95) and it accesses DB2 resources with ['EXEC SQL ...'](../../MortgageApplication/cobol/epscmort.cbl#230-234).  These 'EXEC' statements are translated by the Cobol compiler to call subsystem stub programs to handle the data exchange. 
 
-<img src="../../images/zarch.png" alt="App Arch" width="600">
+<img src="../images/zarch.png" alt="App Arch" width="600">
 
 
 ### Anatomy of a CICS Application  
@@ -40,7 +40,7 @@ MortApp is a basic online CICS application made up of several programs:
     <br />   
     
     Example epsmort copybook member
-    <img src="../../images/EPSMORT.png" alt="EPSMORT Copybook" width="500">
+    <img src="../images/EPSMORT.png" alt="EPSMORT Copybook" width="500">
   
     ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the a PDS created during the DBB build of the BMS program. ```
     <br />   
@@ -73,7 +73,7 @@ Once the MortApp is built, it needs to be defined to CICS and DB2.  This section
 As illustrated below, programs are defined to DB2 using a [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans).  Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.  
 
 When a DB2 program is compiled, a DB2 DBRM artifact is created. The DBRM is then bound to DB2 to update its resource requirement before it could run.  
-<img src="../../images/plan.png" alt="DB2 Plans and packages" width="500">
+<img src="../images/plan.png" alt="DB2 Plans and packages" width="500">
   
 <br />   
 
