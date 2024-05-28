@@ -89,7 +89,7 @@ CEDA Display of sample App's group (EPSMTM):
 ### EPSP sample screen shots:
 Login to CICS with IBMUSER and the default password sys1.  You must reset the password on first login. 
 Then run the EPSP transaction to view the main application menu.
-<img src="images/SCICS.png" alt="Start CICS Session " width="500">
+<img src="images/scics.png" alt="Start CICS Session " width="500">
 <img src="images/login.png" alt="CICS logon" width="500">
 <img src="images/epsp.png" alt="Start EPSP transaction" width="500">
 <img src="images/epsmap.png" alt="EPSP Main Menu" width="500"> 
