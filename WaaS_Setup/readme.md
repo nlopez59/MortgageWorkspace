@@ -16,7 +16,7 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
  - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
  
 
-The diagram below illustrates the different layers of a mainframe application.  zOS, the operating system is at the bottom and supervises all the work to support program execution and the hardware resources they use (not shown).   Above zOS are the online and batch subsystems.  Other subsystems, like DB2, are common across online and batch applications. The top layer represents mainframe applications. They access subsystem services through an API layer. For example, EPSCMORT accesses CICS services using ['EXEC CICS ...'.](../../MortgageApplication/cobol/epscmort.cbl#90-95) and it accesses DB2 resources with ['EXEC SQL ...'](../../MortgageApplication/cobol/epscmort.cbl#230-234).  These 'EXEC' statements are translated by the Cobol compiler to call subsystem stub programs to handle the data exchange. 
+The diagram below illustrates the different layers of a mainframe application.  zOS, the operating system is at the bottom and supervises all the work to support program execution and the hardware resources they use (not shown).   Above zOS are the online and batch subsystems.  Other subsystems, like DB2, are common across online and batch applications. The top layer represents mainframe applications. They access subsystem services through an API layer. For example, EPSCMORT accesses CICS services using ['EXEC CICS ...'.](../MortgageApplication/cobol/epscmort.cbl#90-95) and it accesses DB2 resources with ['EXEC SQL ...'](../MortgageApplication/cobol/epscmort.cbl#230-234).  These 'EXEC' statements are translated by the Cobol compiler to call subsystem stub programs to handle the data exchange. 
 
 <img src="../images/zarch.png" alt="App Arch" width="600">
 
@@ -27,31 +27,31 @@ A basic [CICS application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundame
 
 **The code**
 MortApp is a basic online CICS application made up of several programs:
-- [cobol/eps**c**mort.cbl](../../MortgageApplication/cobol/epscmort.cbl#L155-157) is the main program. It uses the "EXEC CICS" api to call **bms/epsmort**.   
+- [cobol/eps**c**mort.cbl](../MortgageApplication/cobol/epscmort.cbl#L155-157) is the main program. It uses the "EXEC CICS" api to call **bms/epsmort**.   
 <br />   
 
-- [bms/epsmort.bms](../../MortgageApplication/bms/epsmort.bms) is a 3270 screen BMS program written in assembler language.  
+- [bms/epsmort.bms](../MortgageApplication/bms/epsmort.bms) is a 3270 screen BMS program written in assembler language.  
   - The compiler transforms this source file into 2 artifacts; a [symbolic copybook 'EPSMORT' and a physical executable load module](https://www.ibm.com/docs/en/cics-ts/6.1?topic=map-physical-symbolic-sets). 
 
   - The BMS copybook is saved to a [Partitioned Dataset - PDS](https://www.ibm.com/docs/en/zos-basic-skills?topic=set-types-data-sets) using the dbb-zappbuild "HLQ' arg. 
   - This PDS is then used as a SYSLIB.
-  - SYSLIB is a DDname to allocate a copybook PDS as input to the compiler. This is how the Cobol program's 'Copy' statement gets its copybook source during a build [epscmort](../../MortgageApplication/cobol/epscmort.cbl#L55).  
+  - SYSLIB is a DDname to allocate a copybook PDS as input to the compiler. This is how the Cobol program's 'Copy' statement gets its copybook source during a build [epscmort](../MortgageApplication/cobol/epscmort.cbl#L55).  
    
     <br />   
     
     Example epsmort copybook member
-    
+
     <img src="../images/epsmort.png" alt="EPSMORT Copybook" width="500">
   
     ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the a PDS created during the DBB build of the BMS program. ```
     <br />   
 
-- [cobol/epscsmrt.cbl](../../MortgageApplication/cobol/epscsmrt.cbl) is a program that is called by EPSCMORT to calculate a mortgage. 
+- [cobol/epscsmrt.cbl](../MortgageApplication/cobol/epscsmrt.cbl) is a program that is called by EPSCMORT to calculate a mortgage. 
   - The data is returned using a COMM-AREA.  
   - In Cobol, COMM-AREAs are data structures defined as copybooks within the 'Linkage Section' to exchange data.
 <br />
 
-- [copybook/epsmtcom.cpy](../../MortgageApplication/copybook/epsmtcom.cpy) is the COMM-AREA copybook used between EPSCMORT and EPSCSMRT. This copybook includes 2 other copybooks for input and output data definitions. 
+- [copybook/epsmtcom.cpy](../MortgageApplication/copybook/epsmtcom.cpy) is the COMM-AREA copybook used between EPSCMORT and EPSCSMRT. This copybook includes 2 other copybooks for input and output data definitions. 
 <br />   
 
 ## The infrastructure
