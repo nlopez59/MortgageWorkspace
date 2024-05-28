@@ -43,4 +43,15 @@ propertyGroups:
       - name: syslib
         type: local
         locations:
-          - "**/copybok"
+          - "**/copybook"
+      - name: syslib
+        type: local
+        locations:
+          - "**/bms"
+  - name: BMS 
+    language: cobol
+    libraries:
+      - name: syslib
+        type: local
+        locations:
+          - "**/bms"
