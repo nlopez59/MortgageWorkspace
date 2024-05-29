@@ -1,11 +1,13 @@
 # DBB DevOps Proof of Concept (POC) with IBM WaaS Stock Image  
 
 ## Overview
-This repo contains a sample CICS/DB2 Cobol application and a script to automate the install for a DevOps POC.  To get started, clone this repo and run  [initPOC.bat](Waas_Setup/initPOC.bat) from a Windows DOS terminal.  When it completes, use the default `IBMUSER` RACF user ID and default password 'sys1' to login to CICS. Then run the transaction  `EPSP` to verify the installation. As a final step, configure your IDE, IDz or vsCode, and any CI/CD orchestrator to run DBB based build and deploy pipelines. 
+This repo contains a script to install a sample CICS/DB2 Cobol application for use in a DevOps POC running on WaaS.  To get started, clone this repo and run the [initPOC.bat](Waas_Setup/initPOC.bat) script from a Windows DOS terminal.  When it completes, use the default `IBMUSER` RACF ID and the password 'sys1' to login to CICS. Then run transaction `EPSP` to verify the installation. As a final step, configure your IDE, IDz or vsCode, and any CI/CD orchestrator to run DBB based build and deploy pipelines. 
+
+For those new to CICS/DB2 programming, the [WaaS_Setup](WaaS_Setup/readme.md) page provides a general overview and the steps performed by the script to install and configure the sample app.   
 
 
 ### General Information
-WaaS stock images do **not** include a sample app or other DevOps/SDLC configurations like dbb-zappbuild, DB2 connection to CICS and several others settings. This script was created to address those needs.
+WaaS stock images do **not** include a sample app or other DevOps/SDLC configurations like dbb-zappbuild, DB2 connection to CICS and several others settings. The initPOC script was created to address those needs.
 
 The script has been tested with the z/OS 3.1 image shown below. Unfortunately, new stock images may introduce new system libraries that will require manual reconfiguration of this script. <img src="images/vsi.png" alt="Supported Stock Image" width="400">
 
@@ -13,13 +15,8 @@ The script has been tested with the z/OS 3.1 image shown below. Unfortunately, n
 - Its small and simple. 
 - It does not require any knowledge of specialized tools like Ansible, Terraform...
 - IBM’ers with access to create a WaaS instance can use this for testing and learning.
-- Customers with access to a pre-provisioned WaaS Instance can follow these same steps as part of a POC.
-- See 
-   [WaaS_Setup](WaaS_Setup/readme.md) 
-
-
-  for a more detailed explanation what the script configures and the design of the sample app.
-
+- Customers with access WaaS VSI can follow these same steps as part of a POC.
+  
 ### PreReqs - Before Running the Script 
 - Add the active VSI’s IP to your local `.ssh/config` with the entry name `poc-waas`:
    ```plaintext
@@ -27,10 +24,10 @@ The script has been tested with the z/OS 3.1 image shown below. Unfortunately, n
        HostName <VSI_IP>
        User IBMUSER
 - Ensure your local SSH key can access the VSI.  
-- Ensure the VSI is active and the z/OS IPL complete using the ssm cmd - ssh poc-waas 
+- Ensure the VSI is active and the z/OS IPL complete by using the ssh cmd - ```ssh poc-waas ```
 - You will need Windows Admin rights to install the z/OS Certificate for 3270 and IDz access. 
   
-### After the successfully completes  
+### After the script completes  
 - Genrate and add the zOS IBMUSER's public SSH key to your github server account using the zOS Unix cmd:
     - ssh-keygen  -t rsa -b 4096 -C 'ibmuser@ibm.com'        
 - Configure your IDE, Git, CI and CD servers
@@ -40,46 +37,55 @@ The script has been tested with the z/OS 3.1 image shown below. Unfortunately, n
     - 8137-8139 for IDz over RSED STC
     - 8195 for Zowe over RSEAPI 
     - 10443 for Zowe over zOSMF as an alternative to RSEAPI
-  - [The full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
+  - [Here is the full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
 
-Example Init Script output:    
+Example initPOC.bat output:    
 <img src="images/initrun.png" alt="Init Script Run" width="700">
 
 
 ### Build and unit testing: 
-- The sample CICS Mortgage application is installed and configured in this WaaS VSI.  
+- The sample CICS Mortgage application is installed and configured in the WaaS zOS instance.
 - With IDz or vsCode, edit and build it with DBB using the '-HLQ' of 'DBB.POC'. 
-- This app's CICS transaction is EPSP under pgm 'cobol/epscmort' and map 'bms/epsmort.bms'.
+- The app's CICS transaction is 'EPSP' which runs program 'cobol/epscmort' and displays the 'bms/epsmort.bms' map.
 
-SAmple CEDA DIsplay of the sample App's  group (EPSMTM):
+Sample CEDA DIsplay of the sample app's group (EPSMTM):
 <img src="images/ceda1.png" alt="CEDA DI G(EPSMTM)" width="500">
 
-- The JCL folder has jobs to run DB2 Bind and CICS newcopy.
+- The JCL folder has jobs to run the applications DB2 Bind and CICS newcopy.
   - [jcl\newcopy.jcl](jcl\newcopy.jcl)  
   - [jcl\bind.jcl](jcl\bind.jcl)  
-  - Changes to the main program EPSCMORT requires a DB2 bind
+  - Changes to the main program EPSCMORT requires a DB2 bind.
   - All programs require a newcopy. 
-- As a test, use IDz or vsCode to change the BMS.
+- As a test, use IDz or vsCode to change and test the BMS map.
 - Configure your CD pipeline to automate newcopy and binds. 
     
+     
+### Helpful CICS tips and transactions:  
+-  CEDF - start a debug session
+-  CESF - logoff
+-  CEMT - manage resources like "CEMT SET PROG(EPSCMORT) NEWCOPY"
+-  press the 'clear' key to reset the screen an enter to start a new transaction 
   
-### Installed Helper Scripts: 
-- A CICS newcopy script for IDz can be added to refresh a program after a user build.  In IDz change the DBB 'preferences/groovy prefix' with: 
-    - <span style="font-size: 12px;">"sh /u/ibmuser/dbb-zappbuild/scripts/cics-newcopy.sh &; groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180  "</span>
-    
-- Several pipeline helper scripts are available in the CD, CI and UCD folder of '/u/ibmuser/dbb-zappbuild/scripts'
-- Review the jenkinsfile example in the repo for examples on how to use these scripts.
-   
-### Helpful CICS transactions: 
--  CEDF=debug
--  CESF=logoff
--  CEMT=manage resources like "CEMT SET PROG(EPSCMORT) NEWCOPY"
-  
-### EPSP sample screen shots:
+### CICS sample app screen shots:
 Login to CICS with IBMUSER and the default password sys1.  You must reset the password on first login. 
 Then run the EPSP transaction to view the main application menu.
-<img src="images/scics.png" alt="Start CICS Session " width="500">
-<img src="images/login.png" alt="CICS logon" width="500">
-<img src="images/epsp.png" alt="Start EPSP transaction" width="500">
-<img src="images/epsmap.png" alt="EPSP Main Menu" width="500"> 
- 
+
+<figure>
+  <figcaption>Start a CICS Session </figcaption>
+  <img src="images/scics.png" width="500">
+</figure>
+
+<figure>
+  <figcaption>CICS logon with ibmuser password sys1 </figcaption>
+  <img src="images/login.png" width="500">
+</figure>
+
+<figure>
+  <figcaption>Start the EPSP transaction</figcaption>
+  <img src="images/epsp.png" width="500">
+</figure>
+
+<figure>
+<figcaption>THE EPSP main map EPSMORT</figcaption>
+<img src="images/epsmap.png" width="500"> 
+</figure> 

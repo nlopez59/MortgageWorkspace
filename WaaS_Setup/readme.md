@@ -1,9 +1,9 @@
-## Crash Course - Anatomy of a Cobol CICS/DB2 application
+## A beginners guide to Cobol CICS/DB2 application development        
 
 This was written for those new to zOS application development.  As a reference, the IBM sample 'MortgageApplication' (MortApp), in this repo, will be used to introduce basic concepts, terminology and application design with a focus on CICS/DB2. As a aid in further learning, links to external material have been included. 
 
 #### Foundational concepts
-Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI and other language. Applications are a set of one or more programs. Each program specializes in some specific business feature. Applications and the data they process can be designed as interactive (online) or as batch processes. 
+Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI and other programming languages. Applications are a set of one or more programs. Each program specializes in some specific business feature. Applications and the data they process can be designed as interactive (online) or as batch processes. 
 
 **Interactive** applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
   - They are designed to interact with users to gather and send data over a network connected text-based 3270 terminal. 
@@ -13,8 +13,10 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
  - Batch is designed to process large amounts of data (batches) without user interaction. 
  - A JCL job is a sequence of step(s) that execute an application program or some utility like sort or DB2 bind. 
  - Steps also have Data Definitions (DDs) to allocate the files (Datasets) used by the program. 
- - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
- 
+ - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) which allocates the DDs and executes the program in  each step. 
+<br /> 
+   Sample JCL step that executes program IEFBR14 and allocates a dataset with the DDname of DD1. The 'SYSOUT=*' DDs are special JES files to display output logs produced a program.  
+ <img src="../images/jcl.png" width="500">
 
 The diagram below illustrates the different layers of a mainframe application.  zOS, the operating system is at the bottom and supervises all the work to support program execution and the hardware resources they use (not shown).   Above zOS are the online and batch subsystems.  Other subsystems, like DB2, are common across online and batch applications. The top layer represents mainframe applications. They access subsystem services through an API layer. For example, EPSCMORT accesses CICS services using ['EXEC CICS ...'.](../MortgageApplication/cobol/epscmort.cbl#90-95) and it accesses DB2 resources with ['EXEC SQL ...'](../MortgageApplication/cobol/epscmort.cbl#230-234).  These 'EXEC' statements are translated by the Cobol compiler to call subsystem stub programs to handle the data exchange. 
 
@@ -30,28 +32,30 @@ MortApp is a basic online CICS application made up of several programs:
 - [cobol/eps**c**mort.cbl](../MortgageApplication/cobol/epscmort.cbl#L155-157) is the main program. It uses the "EXEC CICS" api to call **bms/epsmort**.   
 <br />   
 
-- [bms/epsmort.bms](../MortgageApplication/bms/epsmort.bms) is a 3270 screen BMS program written in assembler language.  
+- [bms/epsmort.bms](../MortgageApplication/bms/epsmort.bms) is a 3270 [BMS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=programs-basic-mapping-support) screen definition program written in assembler language.  
   - The compiler transforms this source file into 2 artifacts; a [symbolic copybook 'EPSMORT' and a physical executable load module](https://www.ibm.com/docs/en/cics-ts/6.1?topic=map-physical-symbolic-sets). 
+  - A load module is another name for an executable program. Or the output artifact of the link-edit (binder) step of a build. 
 
-  - The BMS copybook is saved to a [Partitioned Dataset - PDS](https://www.ibm.com/docs/en/zos-basic-skills?topic=set-types-data-sets) using the dbb-zappbuild "HLQ' arg. 
-  - This PDS is then used as a SYSLIB.
-  - SYSLIB is a DDname to allocate a copybook PDS as input to the compiler. This is how the Cobol program's 'Copy' statement gets its copybook source during a build [epscmort](../MortgageApplication/cobol/epscmort.cbl#L55).  
+  - The symbolic copybook is saved in a [Partitioned Dataset - PDS](https://www.ibm.com/docs/en/zos-basic-skills?topic=set-types-data-sets) allocated with the dbb-zappbuild "HLQ' argument. 
+  - This PDS is then used as a SYSLIB in subsequent builds. 
+  - SYSLIB is a DDname to allocate a copybook PDS as input to the compiler. 
+  - The compilee replaces a Cobol program's ```Copy some-copybook``` statement with the actual copybook source file during the build like in the [epscmort](../MortgageApplication/cobol/epscmort.cbl#L55) program.  
    
     <br />   
     
     Example epsmort copybook member
 
-    <img src="../images/epsmort.png" alt="EPSMORT Copybook" width="500">
+    <img src="../images/epsmort.png" width="500">
   
-    ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the a PDS created during the DBB build of the BMS program. ```
+    ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the PDS created during the DBB build of the BMS program. ```
     <br />   
 
 - [cobol/epscsmrt.cbl](../MortgageApplication/cobol/epscsmrt.cbl) is a program that is called by EPSCMORT to calculate a mortgage. 
-  - The data is returned using a COMM-AREA.  
-  - In Cobol, COMM-AREAs are data structures defined as copybooks within the 'Linkage Section' to exchange data.
+  - The data is returned using a [COMMAREA](https://www.ibm.com/docs/en/cics-ts/6.1?topic=affinity-commarea) copybook.  
+  - In Cobol, COMMAREAs are data structures defined as copybooks within the 'Linkage Section' and used to exchange data between programs.
 <br />
 
-- [copybook/epsmtcom.cpy](../MortgageApplication/copybook/epsmtcom.cpy) is the COMM-AREA copybook used between EPSCMORT and EPSCSMRT. This copybook includes 2 other copybooks for input and output data definitions. 
+- [copybook/epsmtcom.cpy](../MortgageApplication/copybook/epsmtcom.cpy) is the COMMAREA used between EPSCMORT and EPSCSMRT. It includes 2 other copybooks. One for  input and another output data structures.
 <br />   
 
 ## The infrastructure
@@ -71,6 +75,34 @@ Once the MortApp is built, it needs to be defined to CICS and DB2.  This section
  
 
 **CICS System Layer**
+Application teams focus on the various parts of thier application and work with the CICS Admins to design the respource and defintion needed to run their code. 
+
+CICS Admin also configure system-wide settings  used across all approvlication.  The list of things they do is extensive.  But for our example there are 2 key componebts that need to be configure to run our sample applicaiton: 
+
+- **The CICS Started Task**
+In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  
+
+The CICS STC in WaaS 3.1
+<img src="../images/cicsstc.png" width="500">
+
+
+
+
+Application load modules are added to a PDS defined in CICS's JCL under the DDname [DFH**RPL**](../WaaS_Setup/initVSI-JCL/cicsts61-mod.jcl#L69).  That DDname (RPL for short) is an input dataset to the program [DFHSIP](../WaaS_Setup/initVSI-JCL/cicsts61-mod.jcl#L38) which is CICS. 
+
+When a user enters the transaction EPSP, CICS checks the transaction's resource definition, defined in the DFHCSDUP job, and finds the program name EPSCMORT. CICS loads and executes that program from the RPL PDS. The first thing EPSCMORT does is issue an ['EXEC CICS SEND-MAPONLY MAPSET('EPSMORT')](../MortgageApplication/cobol/epscmort.cbl#L152-L157). This api call tells CICS to load and execute the physical BMS load module from the RPL PDS to display its 3270 map. 
+
+For performance reasons, CICS chace loaded program in memory.  A CICS Newcopy command is issue to refresh that cache when the load module is updated.  A newcopy can be excuted using the CICS utility CEMT like ``` CEMT SET PROG(EPSMORT) NEWCOPY ```
+
+
+
+
+- **The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)**
+  This is CICS's main staup configuration file.   In a WaaS Stock image it is not define to start the DB2 Connection.   A copy was made and stored in this repo to replace the SIP and enable the [DB2CONN](../WaaS_Setup/initVSI-JCL/dfh$sip1#L7) property.
+
+
+
+
  
 
 
@@ -93,8 +125,12 @@ When a DB2 program is compiled, a DB2 DBRM artifact is created. The DBRM is then
     
 
 **DB2 System layer**
+Developers work with Database Adminitrators (DBAs) to define DB2 resoruces like tables, stored procs, plans, packages and other objects related to their applcaition.  
 
+In addition to their many tasks, they maintain the DB2 Subsystem STC.  In our WaaS environment that STC is called  DBD1 ans is made up of several supporting STCs starting with the same jobname. 
 
+DB2 STC in WaaS 3.1
+<img src="../images/db2stc.png"  width="500">
 
 
 

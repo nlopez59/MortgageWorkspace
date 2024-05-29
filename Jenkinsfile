@@ -1,8 +1,8 @@
 // Sample Jenkinsfile for WaaS POC's (Nlopez)
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
  
-// change these values to match your configuration
-// sample scripts for WaaS stock image are @ '/u/ibmuser/dbb-zappbuild/scripts'
+// Change these values to match your configuration
+// The UCD stage is not configured.
 
 def myAgent  = 'yourJenkinsAgent???'
 def repo = 'git@???/MortgageWorkspace.git'
@@ -11,6 +11,7 @@ def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
 def appworkspace = 'MortgageWorkspace'
 def appname = 'MortgageApplication'
 
+// a sample groovy script to package dbb artifacts an publish to UCD for deploy. Pending configuration 
 def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
 
 def buzTool  = '/u/ibmuser/???/agent/bin/buztool.sh'
@@ -36,15 +37,8 @@ pipeline {
         stage('Build') {
             steps {
                 println  '** Building with DBB in Impact Mode ...'                  
-                script {
-
-                    // scan  must do a scan on a first run
-                    //sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -h ' + env.USER+'.JENKINS' + ' --fullBuild --scanOnly'
-                    
-                    
-                    // Normal impact Mode
-                    sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8   -h ' + env.USER+'.JENKINS' + ' --impactBuild'
-                   
+                script {                    
+                    sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8   -h ' + env.USER+'.JENKINS' + ' --impactBuild'                   
                 }
             }
         }
