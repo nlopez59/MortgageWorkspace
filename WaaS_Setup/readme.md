@@ -57,20 +57,26 @@ MortApp is a basic online CICS application made up of several programs:
 ## The infrastructure
 Once the MortApp is built, it needs to be defined to CICS and DB2.  This section outlines the Jobs used for the definitions.
 
-**CICS Defintion Jobs**
+**CICS Application Defintions**
 - Transactions are what drive CICS applications. 
   - [EPSP](../../WaaS_Setup/initVSI-JCL/dfhcsdup.jcl#L22) is the main MortApp **Transaction ID** (tranid). All CICS applications must have at least one tranid. 
   - When this tranid is entered on a CICS 3270 screen, CICS starts program EPSCMORT. 
   - The transaction also defines what group its in. A CICS group is a set resources that are common to an application.  In this case, EPSMTM is the group name for the MortApp. 
 <br />   
-- Transactions and all other CICS resources are defined using the IBM batch utility  [DFHCSDUP](https://www.ibm.com/docs/en/cics-ts/6.1?topic=resources-defining-dfhcsdup), as in this example. Or they can be defined with the CICS tranid CEMT [here is a list of other CICS utilities](https://www.tutorialspoint.com/cics/cics_transactions.htm).  In the example JCL you will see lines (control cards) that define:
+- Transactions and all other CICS resources are defined using the IBM batch utility  [DFHCSDUP](https://www.ibm.com/docs/en/cics-ts/6.1?topic=resources-defining-dfhcsdup) , as in this example. Or they can be defined with the CICS tranid CEMT [here is a list of other CICS utilities](https://www.tutorialspoint.com/cics/cics_transactions.htm).  In the example JCL you will see lines (control cards) that define:
   - [DB2CONN](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - that is used to connect the MortApp to the DB2 subsystem 'DBD1'. It also defines 'EPSPLAN' as the DB2 plan for this group (see DB2 definitions below). 
-  - [DB2ENTRY](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - defines DB2 properties related to all transaction for the EPSMTM group. 
+  - [DB2ENTRY](https://wwtestw.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - defines DB2 properties related to all transaction for the EPSMTM group. 
   - MAPSET  - is the physical BMS load module that displays a 3270 screen (map)
   - PROGRAM - are the individual programs that make up the rest of the MortApp. 
  
 
-**DB2 Defintion Jobs**
+**CICS System Layer**
+ 
+
+
+
+
+**DB2 Application Definitions**
 As illustrated below, programs are defined to DB2 using a [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans).  Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.  
 
 When a DB2 program is compiled, a DB2 DBRM artifact is created. The DBRM is then bound to DB2 to update its resource requirement before it could run.  
@@ -85,6 +91,10 @@ When a DB2 program is compiled, a DB2 DBRM artifact is created. The DBRM is then
     -  Bind Package names the plan 'EPSPLAN' and includes the collection of packages for the application (PKLIST).  
     -  The Plan is defined once.  But whenever a package is changed and a new DRBM creatd, it must be bind again.  
     
+
+**DB2 System layer**
+
+
 
 
 
