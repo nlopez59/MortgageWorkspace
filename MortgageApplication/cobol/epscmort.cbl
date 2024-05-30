@@ -1,6 +1,5 @@
        ID DIVISION.
-       PROGRAM-ID. EPSCMORT.
-      *    remove db2 and build and newcopy and epsp
+       PROGRAM-ID. EPSCMORT.    
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-FLEX-ES.
@@ -227,18 +226,18 @@
                              TO MSGERRO.
 
        A805-DUMMY-SQL-CALL.
-      *      EXEC SQL
-      *          SELECT IBMREQD
-      *               INTO :IBMREQD
-      *               FROM SYSIBM.SYSDUMMY1
-      *      END-EXEC.
-      *
-      *     IF SQLCODE = 100
-      *         MOVE 'No rows found on SYSDUMM1.' TO MSGERRO
-      *     ELSE
-      *         IF SQLCODE NOT = 0
-      *             MOVE SQLCODE TO SQL-ERROR-CODE
-      *             MOVE SQL-ERROR-MSG TO MSGERRO
-      *         END-IF
-      *     END-IF.
-            DISPLAY 'DB2 Call Disabled'.
+            EXEC SQL
+                SELECT IBMREQD
+                     INTO :IBMREQD
+                     FROM SYSIBM.SYSDUMMY1
+            END-EXEC.
+      
+           IF SQLCODE = 100
+               MOVE 'No rows found on SYSDUMM1.' TO MSGERRO
+           ELSE
+               IF SQLCODE NOT = 0
+                   MOVE SQLCODE TO SQL-ERROR-CODE
+                   MOVE SQL-ERROR-MSG TO MSGERRO
+               END-IF
+           END-IF.
+      
