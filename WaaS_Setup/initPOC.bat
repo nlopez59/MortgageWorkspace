@@ -105,7 +105,7 @@ rem Use this to init and validate a new WaaS stock image for a simple user POCs.
     rem under /u/ibmuser/dbb-zappbuild/samples/MortgageApplication/application-conf
 
     set build-conf='/u/ibmuser/dbb-zappbuild/build-conf/datasets.properties'
-    echo Adding compiler PDSs to DBB's %build-conf% ... 
+    echo Adding system PDSs to DBB's %build-conf% ... 
     
     rem HARDCODED some versioned libs.  Cant find the latest mq libs so use dummy.
     rem Cant find the latest mq libs so use a know lib for now
@@ -125,6 +125,8 @@ rem Use this to init and validate a new WaaS stock image for a simple user POCs.
     "echo SCSQCOBC=SYS1.MACLIB     >> "%build-conf% ;^
 	"echo SCSQLOAD=SYS1.LINKLIB    >> "%build-conf%   
     
+     echo Added the following system PDSs to %build-conf%
+     %sh% "cat %build-conf% "
     echo .  
     echo ...     
     pause 

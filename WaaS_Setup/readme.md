@@ -83,6 +83,9 @@ Once the MortApp programs are built, they need to be defined to CICS.  This sect
   - MAPSET  - defines the physical BMS load module.
   - PROGRAM - defines the individual programs that make up MortApp. 
  
+- Installing the MortApp in CICS  
+  - In CICS "install" refers to making a resource or group of resources known to CICS so that they can be used during runtime. 
+  - Run an install once, from a CICS terminal with the cmd ```'CEDA INS GROUP(EPSMTM)'```
 
 
 ### CICS System Layer
