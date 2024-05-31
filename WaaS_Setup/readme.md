@@ -74,7 +74,7 @@ The generic diagram below shows the compile and link of program 'PROGA' which in
 Once the MortApp programs are built, they need to be defined to CICS.  This section outlines the Jobs used for those definitions.
 
 - Transactions are CICS terminal commands that start applications or utilities. 
-  - [EPSP](./initVSI-JCL/dfhcsdup.jcl#L22) is the main MortApp **Transaction ID** (tranid). All CICS applications must have at least one tranid. 
+  - [EPSP](./initVSI-JCL/dfhcsdup.jcl#L22[newtab]) is the main MortApp **Transaction ID** (tranid). All CICS applications must have at least one tranid. 
   - When this tranid is entered on a CICS screen, CICS starts program EPSCMORT. 
   - The transaction also defines what group its in. A CICS group is a set resources that are common to an application.  In this case, EPSMTM is the group name. 
 <br />   
