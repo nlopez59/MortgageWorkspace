@@ -1,7 +1,6 @@
 //IBMUSERO JOB 'ACCT#',MSGCLASS=H,REGION=0M,MSGLEVEL=(1,1) 
-//* A batch job to run the CICS CEMT newcopy command
-//* Change the program is needed          
-// COMMAND 'F CICSTS61,CEMT SET PROG(EPSCMORT) NEWCOPY'
-// COMMAND 'F CICSTS61,CEMT SET PROG(EPSMORT) NEWCOPY'
+//* An Opercmd to run the CICS newcopy or phasein in batch 
+// COMMAND 'F CICSTS61,CEMT SET PROG(EPSCMORT) PH'
+// COMMAND 'F CICSTS61,CEMT SET PROG(EPSMORT) PH'
 //NOP EXEC PGM=IEFBR14
 //*

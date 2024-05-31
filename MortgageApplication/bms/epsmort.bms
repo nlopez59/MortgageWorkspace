@@ -32,8 +32,8 @@ EPDIFF2  DFHMDF POS=(17,15),LENGTH=22,INITIAL='Monthly Payment: ',     *
                ATTRB=(PROT,NORM)
 EPPAYMNT DFHMDF POS=(17,42),LENGTH=12,                                 *
                ATTRB=(PROT,NORM),HILIGHT=OFF,COLOR=YELLOW
-MSGERR  DFHMDF POS=(24,15),ATTRB=(PROT,DRK),LENGTH=40,                 X00340000
-               INITIAL='INVALID KEY PRESSED'                            00350000
+MSGERR  DFHMDF POS=(24,15),ATTRB=(PROT,NORM),LENGTH=40,                X00340000
+               INITIAL='Hi'                                             00350000
          DFHMDF POS=(2,48),LENGTH=0,                                   *
                ATTRB=ASKIP
          DFHMDF POS=(5,25),LENGTH=26,INITIAL='WAAS MORTGAGE CALC',     *

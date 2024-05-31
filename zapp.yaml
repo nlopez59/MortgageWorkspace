@@ -44,14 +44,12 @@ propertyGroups:
         type: local
         locations:
           - "**/copybook"
-      - name: syslib
-        type: local
-        locations:
           - "**/bms"
-  - name: BMS 
-    language: cobol
-    libraries:
       - name: syslib
-        type: local
+        type: mvs
         locations:
-          - "**/bms"
+          - "DBB.POC.BMS.COPY"
+          - "CICSTS61.CICS.SDFHCOB"
+
+
+      

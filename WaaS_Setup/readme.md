@@ -1,7 +1,7 @@
 ## A beginners guide to Cobol CICS/DB2 application development        
-This was written for those new to zOS application development.  Its a very very basic walkthrough of the IBM sample 'MortgageApplication' (MortApp) included in this repo. This outlines how it works, and the various CICS and DB2 system level configurations it uses.
+This was written for those new to zOS application development.  Its a __very__ basic walkthrough of the IBM sample 'MortgageApplication' (MortApp) included in this repo. This outlines how the application is designed and various  infrastructure components required to make it run on a new system like a WaaS 3.1 stock image. 
 
-As a aid, links to external material are included for further learning. 
+As a aid, links to external reference material are included for further research and learning. 
 
 #### zOS Development - Foundational concepts
 Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI and other programming languages. Applications are composed of one or more programs and be a mix of languages. Programs are designed to meet some specific business feature/solution. Applications and the data they process can be either interactive (online) or batch. 
@@ -12,10 +12,11 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
  
 **Batch** applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
  - Batch applications use JCL to process large amounts of data in 'batches' without user interaction. 
- - A JCL job is a sequence of step(s) that execute application programs or IBM utilities like Sort, DB2 bind...
- - Each step includes one or more Data Definitions (DDs) that allocate DataSets by Name (DSN). They are the input/output files processed by the program. 
- - Batch applications can also access data in DB2 tables, MQ Queues and a variety of other methods. 
- - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) which allocates files and executes the program of each step. 
+ - A JCL is a sequence of step(s) that together makeup a job. 
+ - Steps execute programs; application or utilities like Sort, DB2 bind...
+ - Steps also include one file allocated as Data Definitions (DDs) by DataSet by Name (DSN). 
+ - Applications use files or other data like DB2 tables, MQ Queues and a variety of other methods. 
+ - Jobs have a RACF User and are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) which allocates files and executes the program of each step. 
 <br /> 
    This example JCL step executes the IBM utility program IEFBR14 and allocates a DSN with the DDname of DD1. The 'SYSOUT=*' DDs are special files used by JES to display output/logs produced by the program.
  <img src="../images/jcl.png" width="500">
@@ -114,38 +115,57 @@ For performance reasons, CICS caches loaded programs in memory.  When the progra
 
 
 ### DB2 Application Definitions
-As illustrated below, programs are defined to DB2 using a [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans).  Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.  
+As illustrated below, programs are defined to DB2 using a [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans).  Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.  A package and program are the  same them in DB2. 
+<img src="../images/plan.png" alt="DB2 Plans and packages" width="500">  
 
-When a DB2 program is compiled, a DB2 DBRM artifact is created. The DBRM is then bound to DB2 to update its resource requirements before it can run.  
-<img src="../images/plan.png" alt="DB2 Plans and packages" width="500">
-  
+When a DB2 program is compiled, a DB2 Database Request Module (DBRM) artifact is created. It's required to [bind](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) the DBRM as a package within a plan.   
 <br />   
 
-- [epsbind.jcl](../../WaaS_Setup/initVSI-JCL/epsbind.jcl#12-17) binds the EPSCMORT  package. 
-    -  The conrtol cards for the bind utility follow the "SYSTSIN DD *" line. 
-    -  The DSN control card connects the job to the DBD1 DB2 subsystem.  
-    -  It then Binds the package EPSCMORT from the PDS allocated with the "//DBRMLIB DD ...". Thats where DBB stores the DBRM when it builds the program. 
-    -  Bind Package names the plan 'EPSPLAN' it belongs too and includes the application (PKLIST) package list also called a collection.  
-    -  The Plan is defined once.  But Package bind must be executed whenever a new DBRM is created. 
-    
+- [epsbind.jcl](../WaaS_Setup/initVSI-JCL/epsbind.jcl#L15) job binds the EPSCMORT package. 
+    -  The in-stream control cards for the bind utility follow the "SYSTSIN DD *" line. 
+    -  The 'DSN SYSTEM(DBD1)' command  connects the job to the DB2 subsystem named DBD1.
+    -  'BIND PACKAGE(EPS) MEMBER(EPSCMORT)' reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD to perform the bind. A bind package must be performed each time a program is changed. 
+    -  'BIND PLAN(EPSPLAN) PKLIST(EPS.*)';
+       -  a plan must be created, ACTION(ADD), for any new DB2 application.
+       -  this plan is called "EPSPLAN" in the DBD1 subsystem.
+       -  it is referenced by the 'DB2CONN' CICS resource created in DFHCSDUP.
+       -  this also defines the plan's PKLIST "Package List" named "EPS.\*".  
+       -  a PKLIST is a collection of one or more packages for a plan. 
+       
+   
 **DB2 System layer**
 Developers work with Database Administrators (DBAs) to define DB2 resources like tables, stored procs, plans, packages and other objects related to their application.  
 
-In addition to their many tasks, DBAs maintain the DB2 Subsystem which, like CICS, is an STC.  In the WaaS stock environment, the STC job name starts with the prefix DBD1. DB2 has seveal supporting STCs with the same prefix. 
+DBAs also maintain the DB2 subsystem which, like CICS, is an STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix. 
 
 **DB2 STC in WaaS 3.1**
 <img src="../images/db2stc.png"  width="500">
 
+Application programs bind thier access to DB2 thrught 
+
+![alt text](image.png)
 
 
-### RACF Security 
-RACF is the security subsystem for zOS and its subsystems.  There are other security products like 'Top Secret' and ACF2. On WaaS, RACF profiles are defined to allow CICS to connect to DB2.
+### Resource Access Control Facility (RACF) - z/OS Security 
+RACF is the security subsystem on zOS.  There are others like 'Top Secret' and ACF2. RACF is where you define users, resources and the profiles that permit a user's access to resources. Resources can be files, applications like CICS, TSO, Unix System Services and many others.  
 
-The [racfdef.jcl](../../WaaS_Setup/initVSI-JCL/racfdef.jcl#12) job is run once to define the permission to access these resources:   
- - RDEFINE FACILITY DFHDB2.AUTHTYPE.DBD1 - defines the security for the **DB2CONN** CICS resource created in the DFHCSDUP job. 
- - RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE defines security for the **DB2ENTRY** resource. 
- - The 'PE' cards define the RACF User(s) PErmission to use the resource. 
-   - In a WaaS environment, the IBMUSER is a special (root-like) user that with READ permission. 
-   - The CICSUSER is CICS's STC RACF ID given the same access.  
+All processes run under an authenticated user id.  CICS and TSO use a login screen to authenticate user with a secret password. An SSH connection to zOS can be authenticated using a password, SSH key or zOS Certs. 
+
+STCs like CICS, DB2 and a UCD Agent are assigned a RACF user id by zOS security Admins.  When the STC starts, that ID is assigned to identify it to the system. This ID is also a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a higher level of access privileges than users.
+
+
+   that ID is used to authenticate them iven a special Uset ID called a service accout 
+
+'s have a special autnicated process defined by teh sysProg which is assThis includes subsystems like DB2 and CICS.  
+
+When configuring connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2), a job like [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12) is submitted to define 2 DB2 resources and user profiles;
+ 1. RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1** - defines a DB2 RACF resource ending in DBD1.  This is the name used when defining the CICS "DB2CONN=DBD1
+  resource in the DFHCSDUP job.  Any name can be used as long as they are the same between DB2 and CICS. 
+ 2. RDEFINE FACILITY DFHDB2.AUTHTYPE.**EPSE** defines a DB2 RACF resource ending in EPSE.   This is the name used when defining the CICS DB2 connection in the DFHCSDUP job.  Any name can be used as long as they are the same between DB2 and CICS. 
+  
+'PE' RACF command creates a profile that '**PE**rmits' a users access to a resources. In effect this allows the CICSUSER STC to connect to the DB2 instance DBD1.
+
+- In a WaaS environment, the IBMUSER is a special (root-like) user that with READ permission. 
+- The CICSUSER is CICS's STC RACF ID given the same access.  
  - The RDELETE cards clean out definitions when rerunning the job. 
   

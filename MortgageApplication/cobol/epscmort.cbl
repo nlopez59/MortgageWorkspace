@@ -65,9 +65,7 @@
 
        PROCEDURE DIVISION USING DFHCOMMAREA.
 
-       EPSCMORT-MAINLINE.
-      * Call procedure to do SQL call
-           PERFORM A805-DUMMY-SQL-CALL
+       EPSCMORT-MAINLINE. 
            MOVE LENGTH OF DFHCOMMAREA to W-COMAREA-LENGTH.
            MOVE DFHCOMMAREA to W-COMMUNICATION-AREA.
            EVALUATE TRUE
@@ -112,7 +110,7 @@
                           COMMAREA( W-COMMUNICATION-AREA )
                    END-EXEC
                WHEN EIBAID = DFHENTER
-      * Process ENTER Key
+      * Process ENTER Key           
                    IF PROCESS-INDICATOR OF W-COMMUNICATION-AREA = '3'
                       PERFORM A100-PROCESS-MAP
                    ELSE
@@ -219,11 +217,14 @@
                              OF W-COMMUNICATION-AREA
                              TO WS-FORMAT-NUMBER.
 
-           MOVE WS-FORMAT-NUMBER
-                             TO EPPAYMNTO.
-           MOVE EPSPCOM-ERRMSG
-                             OF W-COMMUNICATION-AREA
-                             TO MSGERRO.
+           MOVE WS-FORMAT-NUMBER TO EPPAYMNTO.
+      *     MOVE EPSPCOM-ERRMSG
+      *                       OF W-COMMUNICATION-AREA
+      *                       TO MSGERRO.
+         
+      * Call procedure to do SQL call
+           PERFORM A805-DUMMY-SQL-CALL.
+
 
        A805-DUMMY-SQL-CALL.
             EXEC SQL
@@ -232,12 +233,10 @@
                      FROM SYSIBM.SYSDUMMY1
             END-EXEC.
       
-           IF SQLCODE = 100
-               MOVE 'No rows found on SYSDUMM1.' TO MSGERRO
-           ELSE
-               IF SQLCODE NOT = 0
-                   MOVE SQLCODE TO SQL-ERROR-CODE
-                   MOVE SQL-ERROR-MSG TO MSGERRO
-               END-IF
+           
+           MOVE 'DB2 Access Sucessful' TO MSGERRO.
+           IF SQLCODE NOT = 100 and not = 0 
+               MOVE 'SQL Err on SYSDUMMY1' TO MSGERRO    
+               display MSGERRO 'SQLERR: ' SQLCODE
            END-IF.
-      
+

@@ -61,7 +61,7 @@ Sample CEDA DIsplay of the sample app's group (EPSMTM):
     
      
 ### Helpful CICS tips and transactions:  
--  CEDF - start a debug session
+-  CEDF - enable debug session (EDF - Use PF3 to diable)
 -  CESF - logoff
 -  CEMT - manage resources like "CEMT SET PROG(EPSCMORT) NEWCOPY"
 -  press the 'clear' key to reset the screen an enter to start a new transaction 
