@@ -70,12 +70,12 @@ Let's examine how the Cobol source code ['EXEC CICS SEND MAP('EPMENU') MAPSET('E
 
 ``` Side Note: A load module is another name for an executable program. Or the output artifact of the link-edit (binder) step of a build. They also called API, stubs, or objects. ```
 
-This diagram below illustrates how a static program, "PROGB", is linked into main program "PROGA" to produce one load module. Notice how the source languages can be different; Cobol and Assemebler in this case. 
+This diagram below illustrates how a static program or API like "PROGB" is linked into another main program "PROGA" to produce one load module. Notice how the source languages can be different; Cobol and Assembler in this case. 
 <img src="../images/build1.png" width="600">
 
 
 ### CICS Application Definitions
-This section outlines how to install new application in CICS using the MortApp as an example. 
+This section outlines how to install a new application in CICS using the MortApp as an example. 
 
 All CICS applications have a least one transaction which is used to start a main program. 
   - EPSP is the MortApp **Transaction ID** (tranid). 
@@ -92,7 +92,7 @@ Transactions and all other CICS application resources are defined using the IBM 
 <img src="../images/dfhcsdup.png" width="700">
 
 Installing the MortApp in CICS  
-  - In CICS, the command ```'CEDA INS GROUP(EPSMTM)'``` is used once to add the group to CICS. 
+  - In CICS, the command ```'CEDA INSTALL GROUP(EPSMTM)'``` is used once to add the group to CICS. 
 
 
 ### CICS System Layer
@@ -104,6 +104,7 @@ CICS Admins also configure system-wide settings used across all applications.  T
 In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  
 
 Example CICS STC running in WaaS 3.1
+
 <img src="../images/cicsstc.png" width="500">
 
 
