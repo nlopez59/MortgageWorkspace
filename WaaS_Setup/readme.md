@@ -1,13 +1,14 @@
 ## A beginners guide to Cobol CICS/DB2 application development        
-This readme is written for those new to zOS application development. Using the sample 'MortgageApplication' (MortApp) in this repo, this explains how CICS/DB2 applications are designed, how it accesses system resources and the required infrastructure configurations needed to make it run on a bare system like a WaaS 3.1 stock image. 
+This is for those new to zOS application development concepts. The goal is to provide an overview of how mainframe applications work. Using the sample 'MortgageApplication' (MortApp) in this repo, you will understand:
+  - how CICS/DB2 applications are designed
+  - how the are built with [IBM Dependency Based Build (DBB)](https://www.ibm.com/products/dependency-based-build)
+  - the system resources used on a zOS environment like a WaaS 3.1 stock image. 
 
-As an additional aid, links to external reference material are included for further research and learning. 
+As an additional aid, links to external reference material are included for your research and learning. 
 
 #### zOS Development - Foundational concepts
 Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI and other programming languages. Applications are composed of one or more programs and be a mix of languages. Programs are designed to meet some specific business feature/solution. Applications and the data they process can be either interactive (online) or batch. 
 
-
-ADDD PIX of loccal files ====
 
 **Interactive** applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
   - They are designed to interact with users to gather and send data over a network connected text-based 3270 terminal. 
@@ -162,26 +163,18 @@ On the WaaS 3.1 stock image the a batch utility is needed to perform the applica
 ### Resource Access Control Facility (RACF) - z/OS Security 
 RACF is the security subsystem on zOS.  There are others like 'Top Secret' and ACF2. RACF is where you define users, resources and the profiles that permit a user's access to resources. Resources can be files, applications like CICS, TSO, Unix System Services and many others.  
 
-All processes run under an authenticated user id.  CICS and TSO use a login screen to authenticate user with a secret password. An SSH connection to zOS can be authenticated using a password, SSH key or zOS Certs. 
+All processes run under an authenticated user ID.  CICS and TSO use a login screen to authenticate users with a secret password. An SSH connection to zOS can authenticate users with a password, SSH key or zOS Certs. 
 
+STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user id by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a higher level of access privileges than users.  
 
-**RFEVEW III  MMMBBBMMM** 
-
-
-
-STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user id by the zOS Security Admins.  This special id is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a higher level of access privileges than users.  
-
-Connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2), must be defined. 
-
-The job below, [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12) defines these RACF resources in a new WaaS stock image;
- 1. ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1**'``` - defines a DB2 RACF resource name ending in "DBD1". This is the same name used in the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job for the MortApp group.  "DBD1" is an example. Any name can be used as long as they match. 
+In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using a sample job like [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12).  It creates 2 facility classes and permissions need for that connection:
+ - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1**'``` - defines a DB2 RACF resource name ending in "DBD1". This is the same name used in the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they are the same in RACF and CICS.
     
-  
- 1. ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**EPSE**'``` defines a DB2 RACF resource name ending in "EPSE". This is the same name used in the "DB2ENTRY(**EPSE**)" resource defined in the DFHCSDUP job for the MortApp group.  Any name can be used as long as they match. 
+- ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**EPSE**'``` defines a DB2 RACF resource name ending in "EPSE". This is the same name used in the "DB2ENTRY(**EPSE**)" defined in DFHCSDUP.  Any name can be used.
    
 
-The 'PE' RACF commands creates profiles that '**PE**rmits' a users access to a resources. In effect this allows the CICSUSER STC to connect to the DB2 instance DBD1.
-
+The 'PE' RACF commands creates profile to '**PE**rmit' user(s) access to a resource. In effect this allows the CICSUSER ID of the CICSTS61 STC to connect to the DB2 instance DBD1 and use the EPSE entry.
+<img src="../images/racdef.png"  width="700">
   
-  <img src="../images/racdef.png"  width="700">
-  
+## Summary
+The items explain here are the basic configurations for a simple CICS/DB2 application.  Real world production applications may include many other components that are defined similarly to what was described here. The goal was to provide the concept and key terms. 

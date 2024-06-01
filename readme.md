@@ -32,21 +32,23 @@ Running a POC on a WaaS 3.1 image requires customization. The script [initPOC.ba
 
 ### Build and Test
 - Use the sample Mortgage application to run your POC use cases.  
-- Define the [dbb-zappbuild](https://github.com/IBM/dbb-zappbuild) '--hlq' argument as 'DBB.POC' to add your load modules to the deafult CICS RPL PDS.
-- The 'EPSP' CICSTS61 transaction runs program 'MortgageApplication\cobol\epscmort.cbl' which displays the 'MortgageApplication\bms\epsmlis.bms' map.
+- For vsCode, a sample IBM Open Editor "zapp.yaml" file is included in this repo.  See [how to configure vsCode] and DBB(https://mediacenter.ibm.com/media/Configuring+DBB+User+Build+in+VSCode/1_ra0ttr68/189147203). 
+- For IDz, see [how to config IDz with DBB](https://mediacenter.ibm.com/media/IBM+Dependency+Based+Build+CourseB+DBB+User+Build+in+IDZ/1_zszkr8l8).
+- Use the [dbb-zappbuild](https://github.com/IBM/dbb-zappbuild) '**--hlq**' argument of 'DBB.POC' which adds your load modules to the default CICS RPL PDS. Or, configure your CD server to deploy to the 'DBB.POC.LOAD" RPL PDS defined in the 'SYS1.PROCLIB(CICSTS61)' STC. 
+- The MortApp 'EPSP' transaction runs program 'MortgageApplication\cobol\epscmort.cbl' which displays the 'MortgageApplication\bms\epsmlis.bms' map.
 
 CEDA DIsplay of the MortApp's CICS group (EPSMTM):
 <img src="images/ceda1.png" alt="CEDA DI G(EPSMTM)" width="500">
 
-- The JCL folder has jobs to run DB2 Bind and CICS newcopy.
+- The JCL folder in this repo has jobs to run DB2 Bind and CICS newcopy.
   - [jcl\newcopy.jcl](jcl\newcopy.jcl)  
   - [jcl\bind.jcl](jcl\bind.jcl)  
-  - Changes to the main program EPSCMORT requires a DB2 bind.
-  - All programs require a newcopy. 
+- Changes to the main program EPSCMORT requires a DB2 bind.
+- All programs require a newcopy. 
     
      
 ### Additional Tips and References 
-Some helpful CICS commands:
+Some useful CICS transactions:
 -  CEDF - enable debug session (EDF - disable with PF3)
 -  CESF - logoff cics
 -  CEMT - run various utility functions like "CEMT SET PROG(EPSCMORT) NEWCOPY"
