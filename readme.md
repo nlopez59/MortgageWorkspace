@@ -14,13 +14,13 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
 - A 3270 emulator. Or use the remote host emulator in IDz.
 
 ## Getting Started 
-1. clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
-2. logon to CICSTS61 with IBMUSER and temp password 'sys1'. You will be required to reset the temp password.
-3. run the 'EPSP' CICSTS61 transaction to verify the installation 
-4. after the script:
-   1. configure your IDE (IDz or vsCode)
-   2. configure your CI/CD orchestrator 
-   3. generate a zOS IBMUSER SSH key and cut/paste it into your git server account. SSH into zOS Unix and run:
+- clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
+- logon to CICSTS61 with IBMUSER and temp password 'sys1'. You will be required to reset the temp password.
+- run the 'EPSP' CICSTS61 transaction to verify the installation 
+- after the script:
+   - configure your IDE (IDz or vsCode)
+   - configure your CI/CD orchestrator 
+   - generate a zOS IBMUSER SSH key and cut/paste it into your git server account. SSH into zOS Unix and run:
     ```ssh-keygen  -t rsa -b 4096 -C 'ibmuser@ibm.com'```
 - Open WaaS/zOS IP ports for use in your stack: 
     - 992 for 3270 access with TLS 1.2 (requires the install of the zOS cert) 
