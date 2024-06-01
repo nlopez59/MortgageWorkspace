@@ -38,11 +38,10 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
 
 - The MortApp 'EPSP' transaction runs program 'MortgageApplication\cobol\epscmort.cbl' which displays the 'MortgageApplication\bms\epsmort.bms' map.
 - Changes to the main program EPSCMORT requires a DB2 bind.
-- All program changes require a newcopy
+- All program changes require a newcopy.
 - Use the following DB2 Bind and CICS newcopy JCL: 
   - [jcl/newcopy.jcl](jcl/newcopy.jcl)  
   - [jcl/bind.jcl](jcl/bind.jcl)  
-
 - For vsCode, a sample IBM Open Editor "zapp.yaml" file is included in this repo.  See [how to configure vsCode and DBB](https://mediacenter.ibm.com/media/Configuring+DBB+User+Build+in+VSCode/1_ra0ttr68/189147203). 
 - For IDz, see [how to config IDz with DBB](https://mediacenter.ibm.com/media/IBM+Dependency+Based+Build+CourseB+DBB+User+Build+in+IDZ/1_zszkr8l8).
 - Set the [dbb-zappbuild](https://github.com/IBM/dbb-zappbuild) '**--hlq**' argument to 'DBB.POC' which adds your load modules to the default CICS RPL PDS. Or, configure your CD server to deploy to the 'DBB.POC.LOAD" RPL PDS defined in the 'SYS1.PROCLIB(CICSTS61)' STC. 
