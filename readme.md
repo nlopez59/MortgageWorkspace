@@ -30,7 +30,7 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
     - 10443 for Zowe over zOSMF as an alternative to RSEAPI
     - [Here is the full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
 
-<img src="images/vsi-ports.png" width="700">
+<img src='images/vsi-ports.png' width='700'>
 
 
 ### Build and Test
@@ -42,12 +42,12 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
 - Use the following DB2 Bind and CICS newcopy JCL: 
   - [jcl/newcopy.jcl](jcl/newcopy.jcl)  
   - [jcl/bind.jcl](jcl/bind.jcl)  
-- For vsCode, a sample IBM Open Editor "zapp.yaml" file is included in this repo.  See [how to configure vsCode and DBB](https://mediacenter.ibm.com/media/Configuring+DBB+User+Build+in+VSCode/1_ra0ttr68/189147203). 
+- For vsCode, a sample IBM Open Editor 'zapp.yaml' file is included in this repo.  See [how to configure vsCode and DBB](https://mediacenter.ibm.com/media/Configuring+DBB+User+Build+in+VSCode/1_ra0ttr68/189147203). 
 - For IDz, see [how to config IDz with DBB](https://mediacenter.ibm.com/media/IBM+Dependency+Based+Build+CourseB+DBB+User+Build+in+IDZ/1_zszkr8l8).
-- Set the [dbb-zappbuild](https://github.com/IBM/dbb-zappbuild) '**--hlq**' argument to 'DBB.POC' which adds your load modules to the default CICS RPL PDS. Or, configure your CD server to deploy to the 'DBB.POC.LOAD" RPL PDS defined in the 'SYS1.PROCLIB(CICSTS61)' STC. 
+- Set the [dbb-zappbuild](https://github.com/IBM/dbb-zappbuild) '**--hlq**' argument to 'DBB.POC' which adds your load modules to the default CICS RPL PDS. Or, configure your CD server to deploy to the 'DBB.POC.LOAD' RPL PDS defined in the 'SYS1.PROCLIB(CICSTS61)' STC. 
 
 The CICS 'CEDA DISPLAY GROUP(EPSMTMT)' of the MortApp resources:
-<img src="images/ceda1.png"  width="500">
+<img src='images/ceda1.png'  width='500'>
 
     
      
@@ -55,7 +55,7 @@ The CICS 'CEDA DISPLAY GROUP(EPSMTMT)' of the MortApp resources:
 Some useful CICS transactions:
 -  CEDF - enable debug session (EDF - disable with PF3)
 -  CESF - logoff cics
--  CEMT - run various utility functions like "CEMT SET PROG(EPSCMORT) NEWCOPY"
+-  CEMT - run various utility functions like 'CEMT SET PROG(EPSCMORT) NEWCOPY'
 -  press the 'clear' key to reset the screen
 
 
@@ -70,20 +70,20 @@ Then run the EPSP transaction to view the main application menu.
 
 <figure>
   <figcaption>Start a CICS Session </figcaption>
-  <img src="images/scics.png" width="500">
+  <img src='images/scics.png' width='500'>
 </figure>
 
 <figure>
   <figcaption>CICS logon with ibmuser password sys1 </figcaption>
-  <img src="images/login.png" width="500">
+  <img src='images/login.png' width='500'>
 </figure>
 
 <figure>
   <figcaption>Start the EPSP transaction</figcaption>
-  <img src="images/epsp.png" width="500">
+  <img src='images/epsp.png' width='500'>
 </figure>
 
 <figure>
 <figcaption>The EPSP main map EPSMORT</figcaption>
-<img src="images/epsmap.png" width="500"> 
+<img src='images/epsmap.png' width='500'> 
 </figure> 
