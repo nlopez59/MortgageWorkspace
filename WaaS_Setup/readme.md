@@ -130,7 +130,7 @@ The CICS 'System Initialization Program' file or SIP is the main configuration f
 
 ### DB2 Application Definitions
 As illustrated below, programs are defined to DB2 using a DB2 [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans).  Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.   
-<img src="../images/plan.png" alt="DB2 Plans and packages" width="500">  
+<img src="../images/plan.png" alt="DB2 Plans and packages" width="600">  
 
 When a DB2 program is compiled, a DB2 Database Request Module (DBRM) artifact is created and [bound](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) to a package within a plan.   
 <br />   
@@ -143,9 +143,13 @@ When a DB2 program is compiled, a DB2 Database Request Module (DBRM) artifact is
     -  The 'BIND PLAN(EPSPLAN) PKLIST(EPS.*)' command:
        -  creates the plan "EPSPLAN" which is used in the 'DB2CONN' resource defined by the DFHCSDUP job.
        -  defines the plan's PKLIST "Package List" named "EPS.\*".  A PKLIST is a collection of one or more packages for a plan. 
-       
+
+<img src="../images/epsbind.png"  width="600">  
+
+
+
 - [epsgrant.jcl](../WaaS_Setup/initVSI-JCL/epsgrant.jcl#L19) run this job once to grant all users(public) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
-  
+<img src="../images/epsgrant.png"  width="600">  
 
 
 **DB2 System layer**
@@ -157,10 +161,9 @@ DBAs also maintain the DB2 subsystem which, like CICS, is an STC.  In the WaaS 3
 <img src="../images/db2stc.png"  width="500">
 
 
-On the WaaS 3.1 stock image the a batch utility is needed to perform the application binds jobs previouly described.  
-[dsntep2.jcl][dsntep2.jcl](../WaaS_Setup/initVSI-JCL/dsntep2.jcl)  is a job that is one once to enable this utility. 
-
-
+On the WaaS 3.1 stock image the a batch utility must be compiled to perform DB2 binds. 
+[dsntep2.jcl](../WaaS_Setup/initVSI-JCL/dsntep2.jcl) JCL created this utility. 
+<img src="../images/dsntep2.png"  width="500">
 
 
 ### Resource Access Control Facility (RACF) - z/OS Security 
