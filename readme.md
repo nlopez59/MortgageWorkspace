@@ -30,7 +30,7 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
     - 10443 for Zowe over zOSMF as an alternative to RSEAPI
     - [Here is the full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
 
-<img src="images/vsi-ports.png" width="500">
+<img src="images/vsi-ports.png" width="700">
 
 
 ### Build and Test
