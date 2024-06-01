@@ -11,7 +11,7 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
        User IBMUSER
 - Test your connectivity using the ssh cmd from your PC - ```ssh poc-waas ```.
 - Windows Admin rights is required to install the z/OS Certificate for 3270 and IDz access. 
-- A 3270 emulator. Or used the remote host emulator in IDz.
+- A 3270 emulator. Or use the remote host emulator in IDz.
 
 ## Getting Started 
 1. clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
