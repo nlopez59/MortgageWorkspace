@@ -100,7 +100,8 @@ Application teams focus on the various parts of their application and work the C
 
 CICS Admins also configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like the MortApp on a new system like a WaaS stock image; the CICS Started Task and the CICS SIP. 
 
-**The CICS Started Task**
+**The CICS Started Task** 
+<br /> 
 In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  
 
 Example CICS STC running in WaaS 3.1
@@ -111,18 +112,19 @@ Example CICS STC running in WaaS 3.1
 CICS loads applications from the [DFH**RPL**](../WaaS_Setup/initVSI-JCL/cicsts61-mod.jcl#L69) 
 DD in its STC JCL.  In a WaaS stock image, that JCL is modified to include the load PDS for the MortApp.   
 
-In dbb-zappbuild, the HLQ "DBB.POC" will store load modules in "DBB.POC.LOAD" which is also added to the CICS JCL. 
+In dbb-zappbuild, the HLQ "DBB.POC" will store load modules in "DBB.POC.LOAD" which was added to the modified CICS STC JCL. 
 <img src="../images/rpl.png" width="700">
 
 
 
-When EPSP is started, CICS loads and executes program EPSCMORT from the RPL PDS. 
+When EPSP is started, CICS loads and executes program EPSCMORT from a PDS in the RPL PDS. 
 
 For performance reasons, CICS caches loaded programs in memory.  When a new version of a program is deployed, the cmd ```'CEMT SET PROG(EPSCMORT) NEWCOPY'``` will reload the module from the RPL and refresh CICS's cache. 
 
 
-**The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)**
-  The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a WaaS stock image, it must be configured to enable the [DB2CONN](../WaaS_Setup/initVSI-JCL/dfh$sip1#L7) feature. This initializes the   attachment facility between CICS and DB2. 
+**The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
+<br /> 
+The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a WaaS stock image, it must be configured to enable the [DB2CONN](../WaaS_Setup/initVSI-JCL/dfh$sip1#L7) feature. This initializes the   attachment facility between CICS and DB2. 
 <img src="../images/sip.png" width="500">  
 <br />   
 
