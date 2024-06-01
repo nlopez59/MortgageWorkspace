@@ -91,9 +91,10 @@ Transactions and all other CICS application resources are defined using the IBM 
   
 <img src="../images/dfhcsdup.png" width="700">
 
-Installing the MortApp in CICS  
-  - In CICS, the command ```'CEDA INSTALL GROUP(EPSMTM)'``` is used once to add the group to CICS. 
-
+**Installing the MortApp in CICS**
+As a final set, applications are installed in CICS once using the following CICS commands: 
+  - ```'CEDA INSTALL GROUP(EPSMTM)'``` installs the MortApp group 
+  - ```'CEDA INS DB2CONN(DBD1)'``` installs the DB2 Connect resource
 
 ### CICS System Layer
 Application teams focus on the various parts of their application and work the CICS Admins to design the resources and definitions needed to install and run their code. 
