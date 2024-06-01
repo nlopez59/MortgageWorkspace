@@ -60,7 +60,7 @@ For general guidance on DevOps for z/OS see https://ibm.github.io/z-devops-accel
 For those new to CICS/DB2 concepts, the readme in this repo's [WaaS_Setup](WaaS_Setup/readme.md) folder describes the concepts, terminology and steps required to install a new mainframe application.  
 
   
-### CICS MortApp screen shots
+### Sample MortApp screen shots
 Login to CICS with IBMUSER and the default password sys1.  You must reset the password on first login. 
 Then run the EPSP transaction to view the main application menu.
 
@@ -80,6 +80,6 @@ Then run the EPSP transaction to view the main application menu.
 </figure>
 
 <figure>
-<figcaption>THE EPSP main map EPSMORT</figcaption>
+<figcaption>The EPSP main map EPSMORT</figcaption>
 <img src="images/epsmap.png" width="500"> 
 </figure> 
