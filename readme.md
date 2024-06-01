@@ -2,7 +2,7 @@
 
 Running a POC on a WaaS 3.1 image requires customization. A script is included in this repo that automates many of the steps to install a sample CICS v61 DB2 v13 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for early dev and test workloads. 
 
-## Getting started 
+## Getting Started 
 1. clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
 2. logon to CICSTS61 with IBMUSER and temp password 'sys1'. You will be required to reset the temp password.
 3. run the 'EPSP' CICSTS61 transaction to verify the installation 
@@ -60,7 +60,7 @@ For general guidance on DevOps for z/OS see https://ibm.github.io/z-devops-accel
 For those new to CICS/DB2 concepts, the readme in this repo's [WaaS_Setup](WaaS_Setup/readme.md) folder describes the concepts, terminology and steps required to install a new mainframe application.  
 
   
-### Sample MortApp screen shots
+### Sample MortApp Screen Shots
 Login to CICS with IBMUSER and the default password sys1.  You must reset the password on first login. 
 Then run the EPSP transaction to view the main application menu.
 
