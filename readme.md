@@ -1,6 +1,6 @@
 # DevOps Proof of Concept (POC) setup with IBM DBB and WaaS Stock Image v3.1 
 
-Running a POC on a WaaS 3.1 image requires customization. A script is included in this repo that automates many of the steps to install a sample CICS/DB2 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for early dev and test workloads. 
+Running a POC on a WaaS 3.1 image requires some customization. A script is included in this repo that automates many of the steps to install a sample CICS/DB2 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for early dev and test workloads. 
 
 ## Getting Started 
 1. clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
@@ -26,7 +26,7 @@ Running a POC on a WaaS 3.1 image requires customization. A script is included i
    Host poc-waas
        HostName <VSI_IP>
        User IBMUSER
-- Test your connectivty using the ssh cmd - ```ssh poc-waas ```
+- Test your connectivity using the ssh cmd from your PC - ```ssh poc-waas ```
 - Windows Admin rights is required to install the z/OS Certificate for 3270 and IDz access. 
 - A 3270 emulator.
 
