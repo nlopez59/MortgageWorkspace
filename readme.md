@@ -3,7 +3,7 @@
 Running a POC on a WaaS 3.1 image requires customization. The script [initPOC.bat](Waas_Setup/initPOC.bat) automates many of the steps to install a sample CICS v61 DB2 v13 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for dev and test. 
 
 ## Getting started 
-1. clone this repo and run ['WaaS_Setup\initPOC.bat']([jcl\newcopy.jcl](jcl\newcopy.jcl)  from a Windows DOS terminal
+1. clone this repo and run ['WaaS_Setup\initPOC.bat'](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
 2. logon to CICSTS61 with IBMUSER and temp password 'sys1'. You will be required to reset the temp password.
 3. run the 'EPSP' CICSTS61 transaction to verify the installation 
 4. after the script:
