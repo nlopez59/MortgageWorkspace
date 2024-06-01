@@ -162,8 +162,8 @@ DBAs also maintain the DB2 subsystem which, like CICS, is an STC.  In the WaaS 3
 <img src="../images/db2stc.png"  width="500">
 
 
-On the WaaS 3.1 stock image the a batch utility must be compiled to perform DB2 binds. 
-[dsntep2.jcl](../WaaS_Setup/initVSI-JCL/dsntep2.jcl) JCL created this utility. 
+On the WaaS 3.1 stock image the batch utility 'DSNTEP2' must be compiled to perform DB2 binds. 
+[dsntep2.jcl](../WaaS_Setup/initVSI-JCL/dsntep2.jcl) is executed to install this utility. 
 <img src="../images/dsntep2.png"  width="700">
 
 
