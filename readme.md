@@ -1,6 +1,6 @@
 # DevOps Proof of Concept (POC) setup with IBM DBB and WaaS Stock Image v3.1 
 
-Running a POC on a WaaS 3.1 image requires customization. A script is included in this repo that automates many of the steps to install a sample CICS v61 DB2 v13 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for dev and test. 
+Running a POC on a WaaS 3.1 image requires customization. A script is included in this repo that automates many of the steps to install a sample CICS v61 DB2 v13 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for early dev and test workflow. 
 
 ## Getting started 
 1. clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
