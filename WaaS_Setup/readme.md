@@ -40,7 +40,7 @@ A basic [CICS application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundame
   - The symbolic copybook is saved in a [Partitioned Dataset - PDS](https://www.ibm.com/docs/en/zos-basic-skills?topic=set-types-data-sets) allocated with the dbb-zappbuild "HLQ' argument. 
   - This PDS is then used as the SYSLIB in subsequent DBB builds. 
   - SYSLIB is the DDname used to allocate the copybook PDS as input to the compiler.  
-  - A program accesses the EPSMORT symbolic copybook with the ['COPY   EPSMORT'](../MortgageApplication/cobol/epscmort.cbl#L55) Cobol statement. This causes the compiler to add the copybook to the program as shown this sample listing of the EPSMORT compile.
+  - A program accesses the EPSMORT symbolic copybook with the ['COPY   EPSMORT'](../MortgageApplication/cobol/epscmort.cbl#L54) Cobol statement. This causes the compiler to add the copybook to the program as shown this sample listing of the EPSMORT compile.
     <img src="../images/epsmort.png" width="700">
   
     ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the PDS created during the DBB build of the BMS program. ```
