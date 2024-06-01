@@ -144,12 +144,12 @@ When a DB2 program is compiled, a DB2 Database Request Module (DBRM) artifact is
        -  creates the plan "EPSPLAN" which is used in the 'DB2CONN' resource defined by the DFHCSDUP job.
        -  defines the plan's PKLIST "Package List" named "EPS.\*".  A PKLIST is a collection of one or more packages for a plan. 
 
-<img src="../images/epsbind.png"  width="600">  
+<img src="../images/epsbind.png"  width="700">  
 
 
 
 - [epsgrant.jcl](../WaaS_Setup/initVSI-JCL/epsgrant.jcl#L19) run this job once to grant all users(public) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
-<img src="../images/epsgrant.png"  width="600">  
+<img src="../images/epsgrant.png"  width="700">  
 
 
 **DB2 System layer**
@@ -163,7 +163,7 @@ DBAs also maintain the DB2 subsystem which, like CICS, is an STC.  In the WaaS 3
 
 On the WaaS 3.1 stock image the a batch utility must be compiled to perform DB2 binds. 
 [dsntep2.jcl](../WaaS_Setup/initVSI-JCL/dsntep2.jcl) JCL created this utility. 
-<img src="../images/dsntep2.png"  width="500">
+<img src="../images/dsntep2.png"  width="700">
 
 
 ### Resource Access Control Facility (RACF) - z/OS Security 
