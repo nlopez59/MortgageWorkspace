@@ -34,8 +34,8 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
 
 
 ### Build and Test
-- Use the sample Mortgage application to run your POC use cases.  
 
+- Use the sample Mortgage application to run your POC use cases.  
 - The MortApp 'EPSP' transaction runs program 'MortgageApplication\cobol\epscmort.cbl' which displays the 'MortgageApplication\bms\epsmort.bms' map.
 - Changes to the main program EPSCMORT requires a DB2 bind.
 - All program changes require a newcopy.
