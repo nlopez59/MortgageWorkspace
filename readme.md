@@ -2,6 +2,17 @@
 
 Running a POC on a WaaS 3.1 image requires some customization. A script is included in this repo that automates many of the steps to install a sample CICS/DB2 application for running POC use cases. This can also serve as a reference on porting your application(s) and infrastructure for early dev and test workloads. 
 
+### Prerequisites 
+- SSH access to a WaaS instance.
+- Add your WaaS instance's IP to your local PC's  `.ssh/config` file with the entry name `poc-waas`:
+   ```plaintext
+   Host poc-waas
+       HostName <VSI_IP>
+       User IBMUSER
+- Test your connectivity using the ssh cmd from your PC - ```ssh poc-waas ```
+- Windows Admin rights is required to install the z/OS Certificate for 3270 and IDz access. 
+- A 3270 emulator.
+
 ## Getting Started 
 1. clone this repo and run [WaaS_Setup/initPOC.bat](WaaS_Setup/initPOC.bat)  from a Windows DOS terminal
 2. logon to CICSTS61 with IBMUSER and temp password 'sys1'. You will be required to reset the temp password.
@@ -19,16 +30,7 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
     - 10443 for Zowe over zOSMF as an alternative to RSEAPI
     - [Here is the full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
 
-### Prerequisites 
-- SSH access to a WaaS instance.
-- Add your WaaS instance's IP to your local PC's  `.ssh/config` file with the entry name `poc-waas`:
-   ```plaintext
-   Host poc-waas
-       HostName <VSI_IP>
-       User IBMUSER
-- Test your connectivity using the ssh cmd from your PC - ```ssh poc-waas ```
-- Windows Admin rights is required to install the z/OS Certificate for 3270 and IDz access. 
-- A 3270 emulator.
+
 
 ### Build and Test
 - Use the sample Mortgage application to run your POC use cases.  
