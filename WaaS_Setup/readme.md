@@ -139,7 +139,7 @@ When a DB2 program is compiled, a DB2 Database Request Module (DBRM) artifact is
     -  The in-stream control cards for the bind utility follow the "SYSTSIN DD *" line. 
     -  The 'DSN SYSTEM(DBD1)' command  connects the job to the DB2 subsystem named DBD1.
     -  'BIND PACKAGE(EPS) MEMBER(EPSCMORT)' reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD and performs the bind. 
-    -  A bind package must be performed each time a program is changed. 
+    -  A bind package must be performed each time a DB2 program is changed. 
     -  The 'BIND PLAN(EPSPLAN) PKLIST(EPS.*)' command:
        -  creates the plan "EPSPLAN" which is used in the 'DB2CONN' resource defined by the DFHCSDUP job.
        -  defines the plan's PKLIST "Package List" named "EPS.\*".  A PKLIST is a collection of one or more packages for a plan. 
@@ -148,7 +148,7 @@ When a DB2 program is compiled, a DB2 Database Request Module (DBRM) artifact is
 
 
 
-- [epsgrant.jcl](../WaaS_Setup/initVSI-JCL/epsgrant.jcl#L19) run this job once to grant all users(public) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
+- [epsgrant.jcl](../WaaS_Setup/initVSI-JCL/epsgrant.jcl#L19) is run once to grant all public(all users) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
 <img src="../images/epsgrant.png"  width="700">  
 
 
@@ -158,6 +158,7 @@ Developers work with Database Administrators (DBAs) to define DB2 resources like
 DBAs also maintain the DB2 subsystem which, like CICS, is an STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix. 
 
 **DB2 Subsystem STC in WaaS 3.1**
+
 <img src="../images/db2stc.png"  width="500">
 
 
