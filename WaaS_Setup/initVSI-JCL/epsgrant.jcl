@@ -2,8 +2,7 @@
 //*
 //*------------------------------------------------------
 //* njl - 
-//* Grant DB2 access tot the EPS App 
-//*   - Also grant access to the Plan 
+//* Grant DB2 access to the EPS Plan
 //*   - This only needs to be run once 
 //*   - Needs dsntep2 util see dsntep2.jcl 
 //*------------------------------------------------------
