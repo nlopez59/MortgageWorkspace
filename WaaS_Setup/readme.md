@@ -59,7 +59,7 @@ A basic [CICS application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundame
 The diagram below illustrates the different layers of a mainframe application.  zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources they use (not shown).   Above zOS are groups for the online and batch subsystems.  DB2, MQ and other subsystems provide common services. At the top is the application layer and access subsystem services through an API layer. 
 <img src="../images/zarch.png" width="700">
 
-Let's examine how the Cobol source code ['EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ...'](../MortgageApplication/cobol/epscmort.cbl#L90-L95) used in EPSCMORT is transformed into a CICS API:
+Let's examine how the Cobol source code ['EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ...'](../MortgageApplication/cobol/epscmort.cbl#L149-L154) used in EPSCMORT is transformed into a CICS API:
 
 - At compile time, this 'EXEC' is translated into a 'Send Map' CICS API call.   
 - This API is a load module defined in a SYSLIB PDS DD in dbb-zappbuild's cobol.groovy and 'build-conf/dataset.properties'.
