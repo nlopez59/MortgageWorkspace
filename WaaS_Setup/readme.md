@@ -1,5 +1,5 @@
 ## A beginners guide to Cobol CICS/DB2 application development        
-This is for those new to zOS application development concepts. The goal is to provide an overview of how mainframe applications work. Using the sample 'MortgageApplication' (MortApp) in this repo, you will understand:
+This is for those new to zOS application development. The goal is to provide an overview of how mainframe applications work. Using the sample 'MortgageApplication' (MortApp) in this repo, you will understand:
   - how CICS/DB2 applications are designed
   - how the are built with [IBM Dependency Based Build (DBB)](https://www.ibm.com/products/dependency-based-build)
   - the system resources used on a zOS environment like a WaaS 3.1 stock image. 
@@ -27,10 +27,10 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
 
 
 ## Anatomy of a CICS Application  
-A basic [CICS application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has several parts.  We will examine the Mortgage Application to understand how to build, configure and run it in under a WaaS Stock image using CICS/DB2. 
+A basic [CICS application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has several parts.  We will examine the Mortgage Application to understand how to build, configure and run it. 
 
 **The Code**
-- [cobol/eps**c**mort.cbl](../MortgageApplication/cobol/epscmort.cbl#L152) is the main program. It uses the "EXEC CICS" Cobol API to display a screen defined in program **bms/epsmort**.   
+- [cobol/eps**c**mort.cbl](../MortgageApplication/cobol/epscmort.cbl#L149-L154) is the main program. It uses the "EXEC CICS" Cobol API to display a screen defined in program **bms/epsmort**.   
 <br />   
 
 - [bms/epsmort.bms](../MortgageApplication/bms/epsmort.bms) is a 3270 [BMS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=programs-basic-mapping-support) screen definition program written in assembler language.  
