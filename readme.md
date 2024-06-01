@@ -2,7 +2,7 @@
 
 Running a POC on a WaaS 3.1 image requires customization. The script [initPOC.bat](Waas_Setup/initPOC.bat) automates many of the steps to install a sample CICS v61 DB2 v13 application for running test cases. 
 
-To get started:
+## Getting started 
 1. clone this repo and run 'initPOC.bat' from a Windows DOS terminal
 2. logon to CICSTS61 with IBMUSER and temp password 'sys1'. You will be required to reset the temp password.
 3. run the 'EPSP' CICSTS61 transaction to verify the installation 
@@ -30,7 +30,7 @@ To get started:
 - Windows Admin rights is required to install the z/OS Certificate for 3270 and IDz access. 
 - A 3270 emulator.
 
-### Build and Test: 
+### Build and Test
 - Use the sample Mortgage application to run your POC use cases.  
 - Define the [dbb-zappbuild](https://github.com/IBM/dbb-zappbuild) '--hlq' argument as 'DBB.POC' to add your load modules to the deafult CICS RPL PDS.
 - The 'EPSP' CICSTS61 transaction runs program 'MortgageApplication\cobol\epscmort.cbl' which displays the 'MortgageApplication\bms\epsmlis.bms' map.
@@ -58,7 +58,7 @@ For general guidance on DevOps for z/OS see https://ibm.github.io/z-devops-accel
 For those new to CICS/DB2 concepts, the readme in this repo's [WaaS_Setup](WaaS_Setup/readme.md) folder describes the concepts, terminology and steps required to install a new mainframe application.  
 
   
-### CICS sample app screen shots:
+### CICS MortApp screen shots
 Login to CICS with IBMUSER and the default password sys1.  You must reset the password on first login. 
 Then run the EPSP transaction to view the main application menu.
 
