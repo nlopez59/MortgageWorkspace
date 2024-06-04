@@ -1,11 +1,10 @@
 #!/bin/sh
 # create a new racf user to tso and omvs with ssh key init 
 # manual steps:
-#  - need to add user's local  public keys needs to /u/$uid/.ssh/authorized_keys 
+#  - for ssh access, add users local public ssh key to /u/$uid/.ssh/authorized_keys 
 #     >  ssh-keygen -t rsa -b 4096 
-#  - used needs to install 3270 cert  and conn with tls 1.2 on 922 
-
-
+#  - for 3270, install local 3270 cert and connect with tls 1.2 on port 922 
+#  - for vscode use rseapi with racf user $uid and temp password sys1 
 
 # arg: $1 = user id to create 
 . /etc/profile
@@ -25,8 +24,7 @@ tsocmd "AU  $uid NAME(wass_$uid) PASSWORD(SYS1) OWNER(IBMUSER)  TSO(ACCTNUM(ACCT
 tsocmd "ALU $uid OMVS(AUTOUID HOME("/u/$uid") PROGRAM(/bin/sh) AUTOUID)     "												
 tsocmd "PE  PROC001 CLASS(TSOPROC) ID($uid) ACCESS(READ)"						
 tsocmd "PE  ACCT001 CLASS(ACCTNUM) ID($uid) ACCESS(READ)"						
-tsocmd "RDEFINE SURROGAT BPX.SRV.$uid  UACC(READ) "						
-tsocmd "SETROPTS RACLIST(TSOPROC TSOAUTH ACCTNUM SURROGAT) REFRESH                    "						
+tsocmd "SETROPTS RACLIST(TSOPROC TSOAUTH ACCTNUM) REFRESH                    "						
 tsocmd "lu $uid tso,omvs"
 
 mkdir -p /u/$uid/.ssh
@@ -38,3 +36,7 @@ chmod -R 700 /u/$uid/.ssh
 
 ls -las /u/$uid 
 echo " ***" 
+
+#  ref 
+# tsocmd "RDEFINE SURROGAT BPX.SRV.$uid  UACC(READ) "						
+# tsocmd "SETROPTS RACLIST(SURROGAT) REFRESH                    "						

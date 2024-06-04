@@ -1,0 +1,12 @@
+
+## REMOVE THIS LINE - add this to your vscode settings.json (cnt+comma) and chg your RACF User ID
+
+"zopeneditor.zowe": {
+    "defaultCliProfile": "rse"
+  },
+
+  "zopeneditor.userbuild.userSettings": {
+      "dbbWorkspace": "/u/ibmuser/dbb-logs",
+      "dbbHlq": "DBB.POC",
+      "dbbLogDir": "/u/???YOUR_RACF_USERID/dbb-logs/logs" 
+    },
