@@ -25,7 +25,7 @@ Running a POC on a WaaS 3.1 image requires some customization. A script is inclu
 - Open WaaS/zOS IP ports for use in your stack: 
     - 992 for 3270 access with TLS 1.2 (requires the install of the zOS cert) 
     - 8115 JMON for UCD and IDz
-    - 8137 for IDz over RSED STC. Use 8137 as the main host port. 
+    - 8137-8139 for IDz over RSED STC. Use 8137 as the main host port. 
     - 8195 for Zowe over RSEAPI 
     - 10443 for Zowe over zOSMF as an alternative to RSEAPI
     - [Here is the full list of stock image products and ports](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=vpc-configurations-in-zos-stock-images)
