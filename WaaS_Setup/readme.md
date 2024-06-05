@@ -1,9 +1,9 @@
 # Concepts in Mainframe Application Design, Configuration and Deployment
-This is for those new to zOS application development. The goal is to provide an overview on how mainframe applications work. Using the sample CICS/DB2 'MortgageApplication' (MortApp) found in this repo, you will understand:
-  - basic application program design
+This is for those new to zOS application development. The goal is to provide an overview on how mainframe applications work. Using the IBM sample CICS/DB2 'MortgageApplication' (MortApp) found in this repo, you will understand:
+  - basic CICS application design
   - application and system level configurations
   - build and deploy (non CD mode) 
-  - how to initialize a new zOS environment like a WaaS 3.1 stock image. 
+  - considerations in porting an application to a new zOS environment like a [Wazi as a Service](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=overview) (WaaS 3.1) stock image
 
 As an additional aid, links to external reference material are provided. 
 
@@ -37,37 +37,46 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
 ## MortApp Design 
 A basic [CICS/DB2 application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has business logic, a data layer and screen(s) that are also called map(s).  
 
-The Mortapp is designed with 3 types of programs.  A main program, a map program and subprograms:
-- [eps**c**mort.cbl](../MortgageApplication/cobol/epscmort.cbl#L149-L154) is the main program. It uses the "EXEC CICS SEND MAP ..." Cobol API to call program **bms/epsmort**.   It also has "EXEC SQL ..." to access DB2 data. 
-- [epsmort.bms](../MortgageApplication/bms/epsmort.bms) is a 3270 [BMS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=programs-basic-mapping-support) program written in assembler language.  
-  - The compiler's transforms this source file into 2 artifacts; a [symbolic copybook 'EPSMORT' and a physical executable load module](https://www.ibm.com/docs/en/cics-ts/6.1?topic=map-physical-symbolic-sets). 
-  - The symbolic copybook is saved in a [Partitioned Dataset - PDS](https://www.ibm.com/docs/en/zos-basic-skills?topic=set-types-data-sets) allocated with the dbb-zappbuild 'HLQ' argument. 
-  - This PDS is then used as the SYSLIB DD in the compile phase of subsequent DBB builds. 
-  - A program accesses the EPSMORT symbolic copybook with the Cobol statement ['COPY   EPSMORT'](../MortgageApplication/cobol/epscmort.cbl#L54). This causes the compiler to expand the copybook in the program as shown this sample output SYSPRINT listing of the EPSCMORT compile.
-    <img src="../images/epsmort.png" width="700">
-    ```A special note on DBB builds is that BMS copybooks are not stored in the source repo like other copybooks.  Instead they are stored in the PDS created during the DBB build of the BMS program. ```
-    <br />   
-- [cobol/epscsmrt.cbl](../MortgageApplication/cobol/epscsmrt.cbl) is a subprogram called by EPSCMORT "EXEC CICS LINK PROGRAM( W-CALL-PROGRAM ) COMMAREA( W-COMMUNICATION-AREA )" to calculate a mortgage. 
-  - W-COMMUNICATION-AREA is the COMMAREA used to exchange data between programs. In Cobol, they are included in each program as a shared copybook.  
-- [copybook/epsmtcom.cpy](../MortgageApplication/copybook/epsmtcom.cpy) is the COMMAREA designed for this application. It includes 2 other copybooks. One for  input and another output data structures.
+The MortApp is designed with 4 types of source files; A main program, a map program, subprograms and COMMAREAs:
+1. [eps**c**mort.cbl](../MortgageApplication/cobol/epscmort.cbl#L149-L154) 
+   - is the main program. 
+   - it uses the ```"EXEC CICS SEND MAP ..."``` Cobol statement to call program **bms/epsmort**.   
+   - it also uses ```"EXEC SQL ..."``` to access DB2 data. 
+<br />   
+1. [epsmort.bms](../MortgageApplication/bms/epsmort.bms) 
+   - is a 3270 [BMS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=programs-basic-mapping-support) program written in assembler language.  
+   - the compiler creates 2 artifacts from this source code:
+     - a symbolic copybook
+     - a physical load module  
+   - when EPSCMORT is built, the compiler allocates the copybook SYSLIB PDS and adds the source to the program
+   - **Note**- BMS copybooks are not stored in the application repo like other copybooks.  Instead they are stored in the PDS created during the DBB build of the BMS program.
+  <br />   
+
+1. [cobol/epscsmrt.cbl](../MortgageApplication/cobol/epscsmrt.cbl) 
+   - is a subprogram called by EPSCMORT ```"EXEC CICS LINK PROGRAM( W-CALL-PROGRAM ) **COMMAREA**( W-COMMUNICATION-AREA )"``` to calculate a mortgage. 
+<br />  
+
+1. [copybook/epsmtcom.cpy](../MortgageApplication/copybook/epsmtcom.cpy)  
+   - is the COMMAREA used to exchange data between programs
+   - in Cobol, they are included in each program from a shared copybook PDS
+   - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
 **DB2** on zOS is an IBM product that provides Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables. 
 
 
-## The infrastructure
-The diagram below illustrates the different layers of a mainframe application.  zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources they use (not shown).   Above zOS are groups for the online and batch subsystems.  DB2, MQ and other subsystems provide common services. At the top is the application layer and access subsystem services through an API layer. 
+## Main Application Infrastructure Services
+The diagram below illustrates the different layers used to support mainframe applications.  zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Above zOS are groups for the online and batch subsystems.  DB2, RACF and other subsystems provide common services across all types of applications. At the top is the application layer which access subsystem services through an API layer. 
 <img src="../images/zarch.png" width="700">
 
+Let's see how and API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](../MortgageApplication/cobol/epscmort.cbl#L149-L154) used in EPSCMORT: 
 
-Let's see how and API call is created from the Cobol source code ['EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ...'](../MortgageApplication/cobol/epscmort.cbl#L149-L154) used in EPSCMORT: 
-
-- At compile time, the translate phase converts  'EXEC CICS ' statements into the acutal code that calls the API. 
+- At compile time, the translate phase converts  ```"EXEC CICS ..."``` statements into the acutal code that calls the API. 
 - dbb-zappbuild's cobol.groovy script defines the location of the  API with the SYSLIB DD in the link-edit phase.    
 - At link-edit time, the API is [statically ](https://www.ibm.com/docs/nl/cobol-zos/6.3?topic=program-examples-static-dynamic-call-statements) linked to EPSCMORT to create a single load module.    
   
 - At runtime, when EPSCMORT calls the 'Send Map', the CICS API loads and executes the EPSMORT MAPSET application program to display its 3270 map (map and screen are the same thing).  
 
-The compiler 'pre-compiles' all "EXEC SQL ..." into  into DB2 API calls. 
+The compiler 'pre-compiles' all ```"EXEC SQL ..."``` into  into DB2 API calls. 
 
 The diagram below illustrates how a static program or API like "PROGB" is linked into another main program "PROGA" to produce one load module. Notice how the source languages can be different; Cobol and Assembler in this case. 
 <img src="../images/build1.png" width="600">
@@ -150,8 +159,8 @@ When a DB2 program is precompiled, a DB2 Database Request Module (DBRM) artifact
    -  defines the plan's PKLIST "Package List" named "EPS.\*".  A PKLIST is a collection of one or more packages for a plan. 
 
 <img src="../images/epsbind.png"  width="700">  
-
-<br />
+<br/>
+<br/>
 
 
 [epsgrant.jcl](../WaaS_Setup/initVSI-JCL/epsgrant.jcl#L19) is run once to grant public (all users) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
@@ -178,7 +187,7 @@ RACF is the security subsystem on zOS.  There are others like 'Top Secret' and A
 
 All processes run under an authenticated user ID.  CICS and TSO use a login screen to authenticate users with a secret password. An SSH connection to zOS can authenticate users with a password, SSH key or zOS Certs. 
 
-STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user id by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a higher level of access privileges than users.  
+STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user ID by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a higher level of access privileges than users.  
 
 In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using a sample job like [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12).  It creates 2 facility classes and permissions need for that connection:
  - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1**'``` - defines a DB2 RACF resource name ending in "DBD1". This is the same name used in the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they are the same in RACF and CICS.
@@ -190,4 +199,7 @@ The 'PE' RACF commands creates profile to '**PE**rmit' user(s) access to a resou
 <img src="../images/racdef.png"  width="700">
   
 ## Summary
-The items explain here are the basic configurations for a simple CICS/DB2 application.  Real world production applications may include many other components that are defined similarly to what was described here. The goal was to provide the concept and key terms. 
+Using the sample MortApp we covered the basic design and configuration concepts and tasks that are common across CICS/DB2 applications. These same tasks can be performed to port any CICS/DB2 application to a new zOS environment like a WaaS stock image or other new zOS environment. 
+
+As illustrated below, additional DevOps processes and tools like Git, CI and CD can be add to a new environment to provide a full end-to-end DevOps worklow for early dev and test. 
+<img src="../images/waasdevops.png"  width="700">
