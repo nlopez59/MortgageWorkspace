@@ -8,8 +8,13 @@ This is for those new to zOS application development. The goal is to provide an 
 As an additional aid, links to external reference material are provided. 
 
 
+## zOS Application Infrastructure Services
+The diagram below illustrates the different layers used to support mainframe applications.  zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Above zOS are groups for the online and batch subsystems.  DB2, RACF and other subsystems provide common services across all types of applications. At the top is the application layer which access subsystem services through an API layer. 
+<img src="images/zarch.png" width="700">
+
+
 #### zOS Application Design Basics 
-Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI and other programming languages. Applications are composed of one or more programs and can be a mix of languages. Programs are designed to meet some specific business feature/solution. Applications and the data they process can be either interactive (online) or batch. 
+Mainframe programs are written mostly in the Cobol programming language. Other mainframe languages are Assembler, PLI...  Applications are composed of one or more programs and can be a mix of languages. Programs are designed to meet some specific business feature/solution. Applications and the data they process can be either interactive (online) or batch. 
 
 
 **Interactive** applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
@@ -22,16 +27,19 @@ Mainframe programs are written mostly in Cobol. Others can be in Assembler, PLI 
  <img src="images/epsmap.png" width="400">
 
 **Batch** applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
- - Batch applications use JCL to process large amounts of data in 'batches' without user interaction. 
+ - They are designed to process large amounts of data in 'batches' without user interaction. 
  - JCL is like a script with a sequence of step(s) that makeup a job. 
  - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like Sort, DB2 bind...
  - Steps have one or more ```"DD DSN=???,..."``` lines which are Data Definitions (DD) used to create a new file or allocate an existing file by DataSet by Name (DSN).
  - Applications process data in files or other format like DB2 tables, MQ Queues and a variety of other methods. 
  - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) to execute the program(s) in  each step(s). 
- - Job security is managed by RACF - see below. 
+ - Some processes can run outside of JES like dbb-zappbuild. This java process runs under an SSH session without JCL and JES.  However, it allocates files and executes programs just like a JCL job.  
+ - Security for all processes on zOS is managed by RACF - see below. 
 <br /> 
-   This example job executes the IBM utility program IEFBR14 and allocates a new DSN with the DD name of DD1. New file are allocated with certain attributes like logical record size and space needed on the a volume (disk).  The 'SYSOUT=*' DDs are allocated by JES to route program log files. 
+
+   The example job below has one step to execute the IBM utility program IEFBR14. That step allocates a new DSN with the DD name of DD1. New file are allocated with certain attributes like logical record size and space needed on the a volume (disk).  The 'SYSOUT=*' DDs are allocated by JES for program logs. 
  <img src="images/jcl.png" width="500">
+
 
 
 ## MortApp Design 
@@ -63,12 +71,7 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
 
 **DB2** on zOS is an IBM product that provides Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables. 
 
-
-## Main Application Infrastructure Services
-The diagram below illustrates the different layers used to support mainframe applications.  zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Above zOS are groups for the online and batch subsystems.  DB2, RACF and other subsystems provide common services across all types of applications. At the top is the application layer which access subsystem services through an API layer. 
-<img src="images/zarch.png" width="700">
-
-Let's see how and API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/cobol/epscmort.cbl#L149-L154) used in EPSCMORT: 
+Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/cobol/epscmort.cbl#L149-L154) used in EPSCMORT: 
 
 - At compile time, the translate phase converts  ```"EXEC CICS ..."``` statements into the acutal code that calls the API. 
 - dbb-zappbuild's cobol.groovy script defines the location of the  API with the SYSLIB DD in the link-edit phase.    
