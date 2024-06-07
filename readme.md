@@ -9,7 +9,12 @@ As an additional aid, links to external reference material are provided.
 
 
 ## zOS Application Infrastructure Services
-The diagram below illustrates the different layers used to support mainframe applications.  zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Above zOS are groups for the online and batch subsystems.  DB2, RACF and other subsystems provide common services across all types of applications. At the top is the application layer which access subsystem services through an API layer. 
+The diagram below illustrates the different software layers used to create and support mainframe applications.  
+- zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Systems Programmers install, patch, upgrade and tune the core OS and support  Administrators and Developers. 
+  
+- In the middle are Online, Common amd Batch Services that are managed by various Systems Administrators with specialized skills to configure, secure and tune these services. They also support application teams during development and operations.
+
+- The top layer, represents the business applications and the subsystem services they can use through one or more application programming interfaces (API).
 <img src="images/zarch.png" width="700">
 
 
@@ -37,11 +42,11 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
  - Security for all processes on zOS is managed by RACF - see below. 
 <br /> 
 
-   The example job below has one step to execute the IBM utility program IEFBR14. That step allocates a new DSN with the DD name of DD1. New file are allocated with certain attributes like logical record size and space needed on the a volume (disk).  The 'SYSOUT=*' DDs are allocated by JES for program logs. 
+   The example job below has one step to execute the IBM utility program IEFBR14. That step allocates a new DSN with the DD name of DD1. A new file is allocated with certain attributes like logical record size and disk space on a volume (disk).  The ```"SYSOUT=*"``` DDs are allocated by JES for program logs. 
  <img src="images/jcl.png" width="500">
 
 
-
+##BBMM##
 ## MortApp Design 
 A basic [CICS/DB2 application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has business logic, a data layer and screen(s) that are also called map(s).  
 
@@ -69,41 +74,51 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - in Cobol, they are included in each program from a shared copybook PDS
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
-**DB2** on zOS is an IBM product that provides Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables. 
-
+**CICS API**
 Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/cobol/epscmort.cbl#L149-L154) used in EPSCMORT: 
 
-- At compile time, the translate phase converts  ```"EXEC CICS ..."``` statements into the acutal code that calls the API. 
-- dbb-zappbuild's cobol.groovy script defines the location of the  API with the SYSLIB DD in the link-edit phase.    
-- At link-edit time, the API is [statically ](https://www.ibm.com/docs/nl/cobol-zos/6.3?topic=program-examples-static-dynamic-call-statements) linked to EPSCMORT to create a single load module.    
+- At compile time, the EPSCMORT  ```"EXEC CICS ..."``` command is _translated_ into a CICS API service call. 
+- At link-edit time, the API is [statically](https://www.ibm.com/docs/nl/cobol-zos/6.3?topic=program-examples-static-dynamic-call-statements) linked from a SYSLIB PDS into EPSCMORT to create a single load module.     
   
-- At runtime, when EPSCMORT calls the 'Send Map', the CICS API loads and executes the EPSMORT MAPSET application program to display its 3270 map (map and screen are the same thing).  
+- At runtime, when EPSCMORT calls the 'Send Map' API, CICS loads and executes the EPSMORT BMS program to display its 3270 map (map and screen are the same thing).  
 
-The compiler 'pre-compiles' all ```"EXEC SQL ..."``` into  into DB2 API calls. 
+
+
+**DB2 API** 
+DB2 on zOS is an IBM product that provides common Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables using DB2 APIs. 
+
+- At compile time, all ```"EXEC SQL ..."``` source code statements are _precompiled_ into DB2 API calls. 
+- The compiler also outputs a DB2 DBRM file for the program.
+- At link-edit time, the DB2 API is statically linked from a SYSLIB PDS into EPSCMORT to create a single load module.     
+- Load modules can be linked with a mix of CICS, DB2 and many other subsystem APIs. 
+- For DB2 based programs, a job is executed to Bind the program's DBRM to the DB2 subsystem. 
 
 The diagram below illustrates how a static program or API like "PROGB" is linked into another main program "PROGA" to produce one load module. Notice how the source languages can be different; Cobol and Assembler in this case. 
 <img src="images/build1.png" width="600">
 
-**Side Notes** 
- - A load module is another name for an executable program. Or the output artifact of the link-edit (binder) step of a build. They also called API, stubs, or objects. 
- - Load modules can be statically linked during the link-edit build phase as explained above.  Or they can be dynamically called at runtime where the 'system' finds and loads the program for execution. 
- - Modern Cobol compilers 'translate' and 'precompile' CICS and DB2 source before the final compilation phase. Previously, these phases were performed as 3 separate JCL steps; CICS Translate, DB2 precompile, Compile. 
+**Side Notes**  
+ - In addition to including copybooks, modern cobol compilers _translate_ and _precompile_ CICS and DB2 source before the compile.
+ -  In older versions of the compiler,   translation and precompile where executed as pre-processor steps before the compile. 
+ -  The output of a compile is called  Object Code (or Object Deck) and used as input to the link-edit phase.   
+ - A load module is another name for an executable program. Or the output artifact of the link-edit (binder) step of a build. They are also called API, stubs, binaries or objects. 
+ - Load modules can be statically linked during the link-edit phase as explained above.  Or they can be dynamically called at runtime where the 'system' finds and loads the program for execution. 
 
 
 
 ### CICS Application Configuration 
-This section outlines how to configure a new application in CICS using the MortApp as an example. 
+This section outlines how to configure a new application in CICS using MortApp as an example. 
 
+##### CICS Transactions
 All CICS applications have a least one transaction which is used as a starting point: 
   - EPSP is the MortApp **Transaction ID** (tranid). 
   - When EPSP its entered on a CICS terminal, CICS starts the main program EPSCMORT.   
   - EPSCMORT calls EPSMORT to send a Map to the user screen.
   - The user enters data in the screen which is sent back to the main program.  
-  - This can be repeated until the user enters PF3 to end the transaction.
+  - This can be repeated until the user enters PF3 to terminate the transaction.  
 <img src="images/pgmflow.png" width="700">
 
 
-
+##### CICS Resource Definitions  
 Transactions and all other CICS application resources are configured using the IBM batch utility [DFHCSDUP](https://www.ibm.com/docs/en/cics-ts/6.1?topic=resources-defining-dfhcsdup). The example JCL below shows the resource definitions needed for the MortApp:
   - GROUP(EPSMTM) is used to define all related application resources.  CICS commands and global properties can be performed at the group level like the 'DELETE GROUP' command which removes all resources for the group.
   - [DB2CONN](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - is the DB2 subsystem and DB2 plan used to connect any DB2 program in the group to the DB2 subsystem name DBD1.
@@ -113,18 +128,18 @@ Transactions and all other CICS application resources are configured using the I
   
 <img src="images/dfhcsdup.png" width="700">
 
-**Installing the MortApp in CICS**
-As a final step, applications are installed in CICS once using the following CICS commands: 
+##### Installing an Application 
+As a final step, MortApp is installed in once using the CICS commands: 
   - ```'CEDA INSTALL GROUP(EPSMTM)'``` installs the MortApp group 
   - ```'CEDA INSTALL DB2CONN(DBD1)'``` installs the DB2 Connect resource
 
-### CICS System Layer 
-Application teams focus on the various parts of their application and work the CICS Admins to design the resources and definitions needed to install and run their code. 
+### The CICS System Layer 
+Application teams focus on the various parts of their application and work withthe CICS Admins to design the resources and definitions needed to install and run their code. 
 
-CICS Admins also configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like the MortApp on a new environment; the CICS Started Task and the CICS SIP. 
+CICS Admins also configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like MortApp on a new environment; the CICS Started Task and the CICS SIP. 
 
 **The CICS Started Task** 
-In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  
+In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  STC's are configured to automatically start when zOS is IPLed - Initial Program Load  (also called boot).
 
 Example CICS STC running in WaaS 3.1
 <img src="images/cicsstc.png" width="500">
@@ -132,13 +147,14 @@ Example CICS STC running in WaaS 3.1
 
 CICS loads applications from the [DFH**RPL**](../WaaS_Setup/initVSI-JCL/cicsts61-mod.jcl#L69) DD in its JCL. In a new environment, that JCL is modified to include the load PDS for the application. 
 
-Using dbb-zappbuild with the HLQ "DBB.POC" will store the MortApp load modules in "DBB.POC.LOAD" which is  added as the RPL in the CICS STC JCL. 
+Use dbb-zappbuild's "HLQ='DBB.POC'" to store the MortApp load modules in the "DBB.POC.LOAD" PDS.  This same PDS is then added to the RPL DD of the CICS STC JCL. 
 <img src="images/rpl.png" width="700">
 
 
+##### CICS Newcopy 
 When EPSP is started, CICS loads and executes program EPSCMORT from the RPL PDS. 
 
-For performance reasons, CICS caches loaded programs in memory.  During early dev and test, when new versions of a program is deployed, the cmd ```'CEMT SET PROG(EPSCMORT) NEWCOPY'``` is used to reload the module from the RPL and refresh CICS's cache. 
+For performance reasons, CICS caches loaded programs in memory.  During early dev and test, when a new version of a program is deployed, the cmd ```'CEMT SET PROG(EPSCMORT) NEWCOPY'``` is required to reload the module from the RPL and refresh CICS's cache. 
 
 
 **The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
@@ -150,16 +166,16 @@ The CICS 'System Initialization Program' file or SIP is the main configuration f
 As illustrated below, programs are defined to DB2 using a DB2 [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans).  Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.   
 <img src="images/plan.png" alt="DB2 Plans and packages" width="600">  
 
-When a DB2 program is precompiled, a DB2 Database Request Module (DBRM) artifact is created and [bound](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) to a package within a plan.   
+When a DB2 program is _precompiled_, a DB2 Database Request Module (DBRM) artifact is created and [bound](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) to a package within a plan.   
 
 [epsbind.jcl](../WaaS_Setup/initVSI-JCL/epsbind.jcl#L15) job binds the EPSCMORT package. 
--  The in-stream control cards for the bind utility follow the "SYSTSIN DD *" line. 
--  The 'DSN SYSTEM(DBD1)' command  connects the job to the DB2 subsystem named DBD1.
--  'BIND PACKAGE(EPS) MEMBER(EPSCMORT)' reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD and performs the bind. 
+-  The in-stream control cards for the bind utility follow the ```"SYSTSIN DD *"``` line. 
+-  The ```'DSN SYSTEM(DBD1)'``` command  connects the job to the DB2 subsystem named DBD1.
+-  ```'BIND PACKAGE(EPS) MEMBER(EPSCMORT)'``` reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD and performs the bind. 
 -  A bind package must be performed each time a DB2 program is changed. 
--  The 'BIND PLAN(EPSPLAN) PKLIST(EPS.*)' command:
+-  The ```"BIND PLAN(EPSPLAN) PKLIST(EPS.*)"``` command:
    -  creates the plan "EPSPLAN" which is used in the 'DB2CONN' resource defined by the DFHCSDUP job.
-   -  defines the plan's PKLIST "Package List" named "EPS.\*".  A PKLIST is a collection of one or more packages for a plan. 
+   -  defines the plan's PKLIST "Package List" named "EPS.\*".   A PKLIST is a _collection_ of one or more packages for a plan. 
 
 <img src="images/epsbind.png"  width="700">  
 <br/>
@@ -176,7 +192,6 @@ Developers work with Database Administrators (DBAs) to define DB2 resources like
 DBAs also maintain the DB2 subsystem which, like CICS, is an STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix. 
 
 **DB2 Subsystem STC in WaaS 3.1**
-
 <img src="images/db2stc.png"  width="500">
 
 
@@ -186,23 +201,23 @@ On a new environment, the batch utility 'DSNTEP2' must be compiled to perform DB
 
 
 ### Resource Access Control Facility (RACF) - z/OS Security 
-RACF is the security subsystem on zOS.  There are others like 'Top Secret' and ACF2. RACF is where you define users, resources and the profiles that permit a user's access to resources. Resources can be files, applications like CICS, TSO, Unix System Services and many others.  
+RACF is the security subsystem on zOS.  There are others like 'Top Secret' and ACF2 generically referred to the "Security Access Facility" or SAF. RACF is where you define users, resources and the profiles that permit a user's access to resources. Resources can be files, applications like CICS, TSO, Unix System Services and many others.  
 
 All processes run under an authenticated user ID.  CICS and TSO use a login screen to authenticate users with a secret password. An SSH connection to zOS can authenticate users with a password, SSH key or zOS Certs. 
 
 STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user ID by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a higher level of access privileges than users.  
 
-In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using a sample job like [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12).  It creates 2 facility classes and permissions need for that connection:
- - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1**'``` - defines a DB2 RACF resource name ending in "DBD1". This is the same name used in the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they are the same in RACF and CICS.
+In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using a sample job like [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12).  It creates 2 facility classes and the permissions need for that connection:
+ - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.DBD1'``` - defines a DB2 RACF resource name ending in **"DBD1"** which is the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1 on the new environment.
     
-- ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**EPSE**'``` defines a DB2 RACF resource name ending in "EPSE". This is the same name used in the "DB2ENTRY(**EPSE**)" defined in DFHCSDUP.  Any name can be used.
+- ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE'``` defines a DB2 RACF resource name ending in **"EPSE"** which is the "DB2ENTRY(**EPSE**)" resource defined in DFHCSDUP.  Any name can be used as long as they match. 
    
 
-The 'PE' RACF commands creates profile to '**PE**rmit' user(s) access to a resource. In effect this allows the CICSUSER ID of the CICSTS61 STC to connect to the DB2 instance DBD1 and use the EPSE entry.
+The 'PE' RACF commands create profiles to '**PE**rmit' user(s) access to a resource. This example permits the CICSUSER ID to connect to the DB2 instance DBD1 using the EPSE entry.
 <img src="images/racdef.png"  width="700">
   
 ## Summary
 Using the sample MortApp we covered the basic design and configuration concepts and tasks that are common across CICS/DB2 applications. These same tasks can be performed to port any CICS/DB2 application to a new zOS environment like a WaaS stock image or other new zOS environment. 
 
-As illustrated below, additional DevOps processes and tools like Git, CI and CD can be add to a new environment to provide a full end-to-end DevOps worklow for early dev and test. 
+As illustrated below, additional DevOps processes and tools like Git, CI and CD can be add to a new environment to support a full end-to-end DevOps worklow for early dev and test. 
 <img src="images/waasdevops.png"  width="700">
