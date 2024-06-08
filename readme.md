@@ -74,7 +74,7 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - is the main program. 
    - it uses the ```"EXEC CICS SEND MAP ..."``` Cobol statement to call program **bms/epsmort**.   
    - it also uses ```"EXEC SQL ..."``` to access DB2 data. 
-<br/>   
+<br/>    
 1. [epsmort.bms](MortgageApplication/bms/epsmort.bms) 
    - is a 3270 [BMS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=programs-basic-mapping-support) program written in assembler language.  
    - the compiler creates 2 artifacts from this source code:
