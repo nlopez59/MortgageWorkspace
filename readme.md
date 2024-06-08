@@ -219,7 +219,7 @@ _Side Note_
 The above DB2 jobs require a System DBA to installed the DSNTEP2 utility described below. 
 
 
-#### DB2 System Layer
+### DB2 System Layer
 Developers work with DB2 System  Administrators (DBAs) to define DB2 resources like tables, stored procs, plans, packages and other objects related to their application.  
 
 DBAs also maintain the DB2 subsystem which, like CICS, is a STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix that provide various services. 
