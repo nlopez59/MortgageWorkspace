@@ -92,6 +92,7 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
 **CICS API**
+
 Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/Cobol/epscmort.cbl#L149-L154) in EPSCMORT: 
 
 - At compile time, the command is _translated_ into a CICS API service call. 
