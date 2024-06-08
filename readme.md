@@ -173,7 +173,7 @@ Example CICS STC running in WaaS 3.1
 <img src="images/cicsstc.png" width="500">
 
 
-CICS loads applications from the [DFH**RPL**](../WaaS_Setup/initVSI-JCL/cicsts61-mod.jcl#L69) DD in its JCL. That DD is modified to include the load PDS(s) of all CICS applications. 
+CICS loads applications from the DFH**RPL** DD in its JCL. That DD is modified to include the load PDS(s) of all CICS applications. 
 
 Using dbb-zappbuild's "HLQ='DBB.POC'" will add MortApp load modules to a PDS called "DBB.POC.LOAD" PDS which is part of the RPL DD concatenation.
 <img src="images/rpl.png" width="700">
@@ -199,7 +199,7 @@ Plans are collections of DB2 packages. A package represents the DB2 resources us
 
 When a DB2 program is _precompiled_, a DB2 Database Request Module (DBRM) artifact is created and [bound](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) to a package within a plan.   
 
-[epsbind.jcl](../WaaS_Setup/initVSI-JCL/epsbind.jcl#L15) job binds the EPSCMORT package. 
+[bind.jcl](jcl/bind.jcl) job binds the EPSCMORT package. 
 -  The in-stream control cards for the bind utility follow the ```"SYSTSIN DD *"``` line. 
 -  The ```'DSN SYSTEM(DBD1)'``` command  connects the job to the DB2 subsystem named DBD1.
 -  ```'BIND PACKAGE(EPS) MEMBER(EPSCMORT)'``` reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD and performs the bind. 
@@ -212,7 +212,7 @@ When a DB2 program is _precompiled_, a DB2 Database Request Module (DBRM) artifa
 <br/><br/>
 
 
-[epsgrant.jcl](../WaaS_Setup/initVSI-JCL/epsgrant.jcl#L19) is run once to grant public (all users) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
+**epsgrant.jcl** is run once to grant public (all users) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
 <img src="images/epsgrant.png"  width="700">  
 
 _Side Note_ 
@@ -228,7 +228,7 @@ DBAs also maintain the DB2 subsystem which, like CICS, is a STC.  In the WaaS 3.
 <img src="images/db2stc.png"  width="500">
 
 
-On a new environment, the sample batch job [dsntep2.jcl](../WaaS_Setup/initVSI-JCL/dsntep2.jcl) is executed once to install the DB2 utility "DSNTEP2" that is used to define and update DB2 application resources like bind and grant: 
+On a new environment, the sample batch below is executed once to install the DB2 utility "DSNTEP2" that is used to define and update DB2 application resources like bind and grant: 
 <img src="images/dsntep2.png"  width="700">
 
 
@@ -239,7 +239,7 @@ All processes run under an authenticated user ID.  CICS and TSO use a login scre
 
 STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user ID by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a high level of access privileges.  
 
-In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using a sample job like [racfdef.jcl](../WaaS_Setup/initVSI-JCL/racfdef.jcl#12).  It creates 2 facility classes and the permissions need for that connection:
+In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using the sample job below.  It creates 2 facility classes and the permissions need for that connection:
  - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.DBD1'``` - defines a DB2 RACF resource name ending in **"DBD1"** which is the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1.
     
 - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE'``` defines a DB2 RACF resource name ending in **"EPSE"** which is the "DB2ENTRY(**EPSE**)" resource defined in DFHCSDUP.  Any name can be used as long as they match. 
