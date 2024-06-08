@@ -185,6 +185,9 @@ When EPSP is started, CICS loads and executes program EPSCMORT from the RPL lib.
 
 For performance reasons, CICS caches loaded programs in memory.  During early dev and test, as new versions of a program are tested, the CICS command  ```'CEMT SET PROG(EPSCMORT) NEWCOPY'``` is required to reload the module from the RPL and refresh CICS's cache. 
 
+The batch job [newcopy.jcl](jcl/newcopy.jcl) can be used to run that command. 
+
+
 
 **The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
 The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the DB2CONN feature as shown below. This enables the attachment facility between CICS and DB2. 
