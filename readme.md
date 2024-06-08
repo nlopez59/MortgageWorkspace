@@ -23,7 +23,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
 
 
 
-**Interactive** applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
+##### Interactive Applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
   - CICS is like a Distributed Application Server; JBoss, Apache, WebSphere and others.  Its purpose is to provide a runtime environment where zOS applications are deployed, executed and managed.
   - Interactive applications are designed to 'interact' with users to gather and send small amounts of data over a networked 3270 terminal (text based green screen). 
   - CICS can handle thousands of concurrent user sessions. 
@@ -32,7 +32,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
  Example CICS 3270 screen
  <img src="images/epsmap.png" width="400">
 
-**Batch** applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
+#####  Batch Applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
  - They are designed to process large amounts of data in 'batches' without user interaction. 
  - JCL is like a script with a sequence of step(s) that makeup a job. 
  - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like Sort, DB2 bind...
@@ -50,7 +50,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
 ## BBMM ***
 
 
-**Build and Deploy**
+#####  Build and Deploy
 A modern zOS DevOps process uses IBM Dependency Based Build (DBB) and a Deployment server like Urban Code Deploy.  There are also other non-DevOps processes like Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs. 
 
 In general they all perform the following basic steps: 
@@ -58,11 +58,11 @@ In general they all perform the following basic steps:
 
 2. **Linkage Edit (linkedit)**:  transforms object code into an executable load module. The linkage editor is also referred to as the binder and is not the same as the DB2 bind process. 
  
-5. **Deploy**: 
-   1. load module(s) are copied into a Library (Library and PDS are the same thing and are types of zOS file systems)
-   2. for Online or Common services, a CICS Newcopy or DB2 Bind may be needed
-   3. batch applications may require new or updated JCL 
-   4. there are many other system resource defintions or updates like a DB2 table, a CICS screen that may be needed as part of a deployment
+3. **Deploy**: 
+   - load module(s) are copied into a Library (Library and PDS are the same thing and are types of zOS file systems)
+   - for Online or Common services, a CICS Newcopy or DB2 Bind may be needed
+   - batch applications may require new or updated JCL 
+   - there are many other system resource defintions or updates like a DB2 table, a CICS screen that may be needed as part of a deployment
    
 
    
@@ -92,7 +92,7 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
 
-**CICS API** 
+##### CICS API
 Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/Cobol/epscmort.cbl#L149-L154) in EPSCMORT: 
 
 - At compile time, the command is _translated_ into a CICS API service call. 
@@ -100,7 +100,7 @@ Let's see how an API call is created from the Cobol source code [```"EXEC CICS S
 - At runtime, when EPSCMORT issues the 'Send Map' command, the CICS API loads and executes the EPSMORT BMS program to display its 3270 map (map and screen are the same thing).  
 
 
-**DB2 API** 
+##### DB2 API
 DB2 on zOS is an IBM product that provides common Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables using DB2 APIs. 
 
 - At compile time, all ```"EXEC SQL ..."``` source code statements are _precompiled_ into DB2 API calls. 
@@ -163,7 +163,7 @@ Application teams focus on the various parts of their application and work with 
 
 In addition to application level configurations, CICS Admins configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like MortApp on a new environment; the CICS Started Task and the CICS SIP. 
 
-**The CICS Started Task** 
+##### The CICS Started Task** 
 In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  STCs are configured to automatically start when zOS is IPLed - Initial Program Load  (also called boot).
 
 Example CICS STC running in WaaS 3.1
@@ -186,7 +186,7 @@ The batch job [newcopy.jcl](jcl/newcopy.jcl) can be used to run that command.
 
 
 
-**The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
+##### The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
 The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the DB2CONN feature as shown below. This enables the attachment facility between CICS and DB2. 
 <img src="images/sip.png" width="500">  
 <br/>   
@@ -219,7 +219,7 @@ _Side Note_
 The above DB2 jobs require a System DBA to installed the DSNTEP2 utility described below. 
 
 
-**DB2 System layer**
+##### DB2 System Layer
 Developers work with DB2 System  Administrators (DBAs) to define DB2 resources like tables, stored procs, plans, packages and other objects related to their application.  
 
 DBAs also maintain the DB2 subsystem which, like CICS, is a STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix that provide various services. 
