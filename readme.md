@@ -91,9 +91,8 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - in Cobol, they are included in each program from a shared copybook PDS
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
-**CICS API**
 
-Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/Cobol/epscmort.cbl#L149-L154) in EPSCMORT: 
+**CICS API** Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/Cobol/epscmort.cbl#L149-L154) in EPSCMORT: 
 
 - At compile time, the command is _translated_ into a CICS API service call. 
 - At linkedit time, the API is [statically](https://www.ibm.com/docs/nl/Cobol-zos/6.3?topic=program-examples-static-dynamic-call-statements) linked from a SYSLIB PDS into EPSCMORT to create a single load module.     
@@ -101,9 +100,7 @@ Let's see how an API call is created from the Cobol source code [```"EXEC CICS S
 - At runtime, when EPSCMORT issues the 'Send Map' command, the CICS API loads and executes the EPSMORT BMS program to display its 3270 map (map and screen are the same thing).  
 
 
-
-**DB2 API** 
-DB2 on zOS is an IBM product that provides common Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables using DB2 APIs. 
+**DB2 API** DB2 on zOS is an IBM product that provides common Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables using DB2 APIs. 
 
 - At compile time, all ```"EXEC SQL ..."``` source code statements are _precompiled_ into DB2 API calls. 
 - The compiler also outputs a DB2 DBRM file for the program.
