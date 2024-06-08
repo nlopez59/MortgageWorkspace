@@ -8,7 +8,7 @@ This is for those new to zOS application development. The goal is to provide an 
 As an additional aid, links to external reference material are provided. 
 
 
-## zOS Application Infrastructure Services
+### zOS Application Infrastructure Services
 The diagram below illustrates the different software layers used by mainframe applications.  
 - zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Systems Programmers install, patch, upgrade and tune the core OS and support  Administrators and Developers. 
   
@@ -18,12 +18,12 @@ The diagram below illustrates the different software layers used by mainframe ap
 <img src="images/zarch.png" width="700">
 
 
-#### zOS Application Design Basics 
+### zOS Application Design Basics 
 Mainframe programs are written mostly in the Cobol programming language. Other mainframe languages are Assembler, PLI...  Applications are composed of one or more programs and can be a mix of languages. Programs are designed to meet some specific business feature/solution. Applications and the data they process can be either interactive (online) or batch. 
 
 
 
-##### Interactive Applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
+#### Interactive Applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
   - CICS is like a Distributed Application Server; JBoss, Apache, WebSphere and others.  Its purpose is to provide a runtime environment where zOS applications are deployed, executed and managed.
   - Interactive applications are designed to 'interact' with users to gather and send small amounts of data over a networked 3270 terminal (text based green screen). 
   - CICS can handle thousands of concurrent user sessions. 
@@ -32,7 +32,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
  Example CICS 3270 screen
  <img src="images/epsmap.png" width="400">
 
-#####  Batch Applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
+####  Batch Applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
  - They are designed to process large amounts of data in 'batches' without user interaction. 
  - JCL is like a script with a sequence of step(s) that makeup a job. 
  - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like Sort, DB2 bind...
@@ -50,7 +50,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
 ## BBMM ***
 
 
-##### Build and Deploy
+#### Build and Deploy
 A modern zOS DevOps process uses IBM Dependency Based Build (DBB) and a Deployment server like Urban Code Deploy.  There are also other non-DevOps processes like Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs. 
 
 In general they all perform the following basic steps: 
@@ -92,7 +92,7 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
 
-##### CICS API
+#### CICS API
 Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/Cobol/epscmort.cbl#L149-L154) in EPSCMORT: 
 
 - At compile time, the command is _translated_ into a CICS API service call. 
@@ -100,7 +100,7 @@ Let's see how an API call is created from the Cobol source code [```"EXEC CICS S
 - At runtime, when EPSCMORT issues the 'Send Map' command, the CICS API loads and executes the EPSMORT BMS program to display its 3270 map (map and screen are the same thing).  
 
 
-##### DB2 API
+#### DB2 API
 DB2 on zOS is an IBM product that provides common Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables using DB2 APIs. 
 
 - At compile time, all ```"EXEC SQL ..."``` source code statements are _precompiled_ into DB2 API calls. 
@@ -121,10 +121,10 @@ _Side Notes_
 
 
 
-### CICS Application Resource Definitions  
+## CICS Application Resource Definitions  
 This section outlines what and how the resources of a new application are defined in CICS using MortApp as an example. 
 
-##### CICS Transactions
+#### CICS Transactions
 All CICS applications have a least one transaction which is used as a starting point: 
   - EPSP is the MortApp **Transaction ID** (tranid). 
   - When EPSP its entered on a CICS terminal, CICS starts the main program EPSCMORT.   
@@ -134,7 +134,7 @@ All CICS applications have a least one transaction which is used as a starting p
 <img src="images/pgmflow.png" width="700">
 
 
-##### CICS Resource Definitions  
+#### CICS Resource Definitions  
 Transactions and all other CICS application resources are configured using the IBM batch utility [DFHCSDUP](https://www.ibm.com/docs/en/cics-ts/6.1?topic=resources-defining-dfhcsdup). The example JCL below shows the resource definitions needed for the MortApp:
   - GROUP(EPSMTM) is used to define all related application resources.  CICS commands and global properties can be performed at the group level like the 'DELETE GROUP' command which removes all resources for the group.
   - [DB2CONN](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - is the DB2 subsystem and DB2 plan used to connect any DB2 program in the group to the DB2 subsystem name DBD1.
@@ -144,7 +144,7 @@ Transactions and all other CICS application resources are configured using the I
   
 <img src="images/dfhcsdup.png" width="700">
 
-##### Installing a CICS Application Definition
+#### Installing a CICS Application Definition
 As a final step, MortApp is added (installed) once to CICS with the  commands:
   - ```'CEDA INSTALL GROUP(EPSMTM)'``` installs the MortApp group 
   - ```'CEDA INSTALL DB2CONN(DBD1)'``` installs the DB2 Connect resource
@@ -158,12 +158,12 @@ As shown above, tab over to an entry and enter **V** to view more details:
 
 
 
-### The CICS System Layer 
+## The CICS System Layer 
 Application teams focus on the various parts of their application and work with Systems Admins to define the resources needed to run their code. 
 
 In addition to application level configurations, CICS Admins configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like MortApp on a new environment; the CICS Started Task and the CICS SIP. 
 
-##### The CICS Started Task** 
+#### The CICS Started Task** 
 In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  STCs are configured to automatically start when zOS is IPLed - Initial Program Load  (also called boot).
 
 Example CICS STC running in WaaS 3.1
@@ -177,7 +177,7 @@ Using dbb-zappbuild's "HLQ='DBB.POC'" will add MortApp load modules to a PDS cal
 
 This is a short-cut in deploying a load module during a DBB User Build. Typically, a Deployment server is used to copy a load module into an RPL lib. 
 
-##### CICS Newcopy 
+#### CICS Newcopy 
 When EPSP is started, CICS loads and executes program EPSCMORT from the RPL lib. 
 
 For performance reasons, CICS caches loaded programs in memory.  During early dev and test, as new versions of a program are tested, the CICS command  ```'CEMT SET PROG(EPSCMORT) NEWCOPY'``` is required to reload the module from the RPL and refresh CICS's cache. 
@@ -186,12 +186,12 @@ The batch job [newcopy.jcl](jcl/newcopy.jcl) can be used to run that command.
 
 
 
-##### The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
+#### The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
 The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the DB2CONN feature as shown below. This enables the attachment facility between CICS and DB2. 
 <img src="images/sip.png" width="500">  
 <br/>   
 
-### DB2 Application Configuration 
+## DB2 Application Configuration 
 As illustrated below, programs are defined to DB2 using a DB2 [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans). 
 
 Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.
@@ -219,7 +219,7 @@ _Side Note_
 The above DB2 jobs require a System DBA to installed the DSNTEP2 utility described below. 
 
 
-##### DB2 System Layer
+#### DB2 System Layer
 Developers work with DB2 System  Administrators (DBAs) to define DB2 resources like tables, stored procs, plans, packages and other objects related to their application.  
 
 DBAs also maintain the DB2 subsystem which, like CICS, is a STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix that provide various services. 
@@ -232,7 +232,7 @@ On a new environment, the sample batch below is executed once to install the DB2
 <img src="images/dsntep2.png"  width="700">
 
 
-### Resource Access Control Facility (RACF) - z/OS Security 
+## Resource Access Control Facility (RACF) - z/OS Security 
 RACF is the security subsystem on zOS.  There are others like 'Top Secret' and ACF2 generically referred to the "Security Access Facility" or SAF. RACF is where you define users, resources and the profiles that permit a user's access to resources. Resources can be files, applications like CICS, TSO, Unix System Services and many others.  
 
 All processes run under an authenticated user ID.  CICS and TSO use a login screen to authenticate users with a secret password. An SSH connection to zOS can authenticate users with a password, SSH key or zOS Certs. 
