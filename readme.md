@@ -82,11 +82,9 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
      - a physical load module  
    - when EPSCMORT is built, the compiler allocates the copybook SYSLIB PDS and adds the source to the program
    - **Note** BMS copybooks are not stored in the application repo like other copybooks.  Instead they are stored in the PDS created during the DBB build of the BMS program.
-  <br/>   
-
+  
 1. [Cobol/epscsmrt.cbl](MortgageApplication/Cobol/epscsmrt.cbl) 
    - is a subprogram called by EPSCMORT ```"EXEC CICS LINK PROGRAM( W-CALL-PROGRAM ) **COMMAREA**( W-COMMUNICATION-AREA )"``` to calculate a mortgage. 
-<br/>  
 
 1. [copybook/epsmtcom.cpy](MortgageApplication/copybook/epsmtcom.cpy)  
    - is the COMMAREA used to exchange data between programs
