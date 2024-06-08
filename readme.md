@@ -187,7 +187,7 @@ For performance reasons, CICS caches loaded programs in memory.  During early de
 
 
 **The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
-The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the [DB2CONN](../WaaS_Setup/initVSI-JCL/dfh$sip1#L7) feature. This initializes the   attachment facility between CICS and DB2. 
+The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the DB2CONN feature as shown below. This enables the attachment facility between CICS and DB2. 
 <img src="images/sip.png" width="500">  
 <br/>   
 
