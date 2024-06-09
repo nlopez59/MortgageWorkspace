@@ -1,26 +1,28 @@
 # Concepts in Mainframe Application Design, Configuration and Deployment
-This is for those new to zOS application development. The goal is to provide an overview on how mainframe applications work. Using the IBM sample CICS/DB2 'MortgageApplication' (MortApp) found in this repo, you will understand:
-  - basic CICS application design
-  - application and system level configurations
-  - build and deploy (non CD mode) 
-  - considerations in porting an application to a new zOS environment like a [Wazi as a Service](https://www.ibm.com/docs/en/wazi-aas/1.0.0?topic=overview) (WaaS 3.1) stock image
+For those new to z/OS application development, exploring the IBM sample CICS/DB2 'MortgageApplication' (MortApp) in this repository can be a valuable reference. By studying MortApp, you can gain insights into several key areas:
 
-As an additional aid, links to external reference material are provided. 
+- Basic CICS Application Design: MortApp serves as a practical example of how CICS applications are structured and designed. You can learn about the components that make up a typical CICS application, such as transactions, programs, and resources.
 
+- Application and System Level Configurations: MortApp provides insights into the configurations required at both the application and system levels. You can understand how to define users, resources, and profiles in RACF, as well as configure CICS and DB2 for application execution.
+
+- Build and Deploy Concepts (Non-CD Mode): Studying MortApp can help you grasp the concepts involved in building and deploying z/OS applications. You can learn about the steps and processes involved in compiling, linking, and deployment.
+
+- Considerations for Porting Applications to New Environments: MortApp can also guide you on the considerations and best practices for porting a CICS/DB2 application to a new z/OS environment, such as a Wazi as a Service (WaaS) 3.1 stock image. This includes understanding the necessary configurations, dependencies, and environment-specific settings.
+
+Additionally, external reference material is provided to supplement your learning and provide further insights into z/OS application development concepts.
 
 ### zOS Application Infrastructure Services
 The diagram below illustrates the different software layers used by mainframe applications.  
-- zOS, the operating system, is at the bottom and supervises applications, subsystems (middleware) and the hardware resources (not shown).   Systems Programmers install, patch, upgrade and tune the core OS and support  Administrators and Developers. 
+- zOS is the operating system, shown at the bottom, that supervises applications, subsystems (middleware) and the hardware (not shown). Systems Programmers install, patch, upgrade and tune this layer as well as support Systems Administrators and Developers. 
   
-- In the middle are Online, Common amd Batch Services that are managed by various Systems Administrators with specialized skills to configure, secure and tune these services. They also support application teams during development and operations.
+-In the middle are online, common, and batch services, which are managed by various systems administrators with specialized skills to configure, secure, and tune these services. They also support application teams during development and operations.
 
 - The top layer, represents the business applications and the subsystem services they can use through one or more application programming interfaces (API).
 <img src="images/zarch.png" width="700">
 
 
 ### zOS Application Design Basics 
-Mainframe programs are written mostly in the Cobol programming language. Other mainframe languages are Assembler, PLI...  Applications are composed of one or more programs and can be a mix of languages. Programs are designed to meet some specific business feature/solution. Applications and the data they process can be either interactive (online) or batch. 
-
+Mainframe programs are mostly written in the COBOL programming language. Other mainframe languages include Assembler, PL/I, and others. Applications are composed of one or more programs and can be a mix of languages. Programs are designed to fulfill specific business features or solutions. Applications and the data they process can be either interactive (online) or batch.
 
 
 #### Interactive Applications use the IBM product [CICS](https://www.ibm.com/docs/en/zos-basic-skills?topic=zos-introduction-cics) or [IMS](https://www.ibm.com/docs/en/integration-bus/10.0?topic=ims-information-management-system).
@@ -51,7 +53,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
 
 
 #### Build and Deploy
-A modern zOS DevOps process uses IBM Dependency Based Build (DBB) and a Deployment server like Urban Code Deploy.  There are also other non-DevOps processes like Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs. 
+A modern z/OS DevOps process typically utilizes IBM Dependency Based Build (DBB) and a deployment server like Urban Code Deploy. However, there are also other non-DevOps processes such as Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs.
 
 In general they all perform the following basic steps: 
 1. **Compile**: transforms source code into object code like the Cobol compiler. 
@@ -101,7 +103,7 @@ Let's see how an API call is created from the Cobol source code [```"EXEC CICS S
 
 
 #### DB2 API
-DB2 on zOS is an IBM product that provides common Database services to interactive and batch applications.  Programmers use Structure Query Language(SQL) to read and write to DB2 tables using DB2 APIs. 
+DB2 on z/OS is an IBM product that provides common database services to interactive and batch applications. Programmers use Structured Query Language (SQL) to read from and write to DB2 tables using DB2 APIs.
 
 - At compile time, all ```"EXEC SQL ..."``` source code statements are _precompiled_ into DB2 API calls. 
 - The compiler also outputs a DB2 DBRM file for the program.
@@ -122,7 +124,7 @@ _Side Notes_
 
 
 ## CICS Application Resource Definitions  
-This section outlines what and how the resources of a new application are defined in CICS using MortApp as an example. 
+This section outlines how the resources of a new application are defined in CICS, using MortApp as an example.
 
 #### CICS Transactions
 All CICS applications have a least one transaction that is used as a starting point: 
@@ -164,7 +166,7 @@ Application teams focus on the various parts of their application and work with 
 In addition to application level configurations, CICS Admins configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like MortApp on a new environment; the CICS Started Task and the CICS SIP. 
 
 #### The CICS Started Task** 
-In simple terms, CICS runs like a batch job under JES.  The main difference is that its a long running job like a unix daemon task.  This type of job is called a 'Started Task' (STC).  STCs are configured to automatically start when zOS is IPLed - Initial Program Load  (also called boot).
+In simple terms, CICS runs like a batch job under JES, but with a key difference—it's a long-running job, similar to a Unix daemon task. This type of job is called a 'Started Task' (STC), which is configured to automatically start when z/OS is IPLed (Initial Program Load, also called boot).
 
 Example CICS STC running in WaaS 3.1
 <img src="images/cicsstc.png" width="500">
@@ -222,10 +224,9 @@ _Side Notes_
 
 
 ### DB2 System Layer
-Developers work with DB2 System  Administrators (DBAs) to define DB2 resources like tables, stored procs, plans, packages and other objects related to their application.  
+Developers collaborate with DB2 System Administrators (DBAs) to define DB2 resources such as tables, stored procedures, plans, packages, and other objects related to their applications.
 
-DBAs also maintain the DB2 subsystem which, like CICS, is a STC.  In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix that provide various services. 
-
+DBAs also maintain the DB2 subsystem, which, like CICS, is a Started Task (STC). In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix that provide various services.
 **DB2 Subsystem STC in WaaS 3.1**
 <img src="images/db2stc.png"  width="500">
 
@@ -236,7 +237,7 @@ On a new environment, the sample batch job below is executed once to install the
 
 
 ## Resource Access Control Facility (RACF) - z/OS Security 
-RACF is the security subsystem on zOS.  There are others like 'Top Secret' and ACF2 generically referred to the "Security Access Facility" or SAF. RACF is where you define users, resources and the profiles that permit a user's access to resources. Resources can be files, applications like CICS, TSO, Unix System Services and many others.  
+RACF is the security subsystem on z/OS, responsible for defining users, resources, and profiles that govern user access to resources. Other security subsystems like 'Top Secret' and ACF2 are generically referred to as the "Security Access Facility" or SAF. Resources can include files, applications like CICS, TSO, Unix System Services, and many others.
 
 All processes run under an authenticated user ID.  CICS and TSO use a login screen to authenticate users with a secret password. An SSH connection to zOS can authenticate users with a password, SSH key or zOS Certs. 
 
@@ -252,11 +253,12 @@ The 'PE' RACF commands create profiles to '**PE**rmit' user(s) access to a resou
 <img src="images/racdef2.png"  width="700">
  
 
-The System Security Admin role normally provides RACF access to all users in an organization including Admins. In a WaaS environment, the default RACF user, "IBMUSER", has special privileges  to perform all the system related tasks. 
-
+The System Security Admin role typically provides RACF access to all users in an organization, including administrators. In a WaaS environment, the default RACF user, 'IBMUSER', has special privileges to perform all system-related tasks."
 
 ## Summary
-Using the sample MortApp we reviewed how CICS/DB2 applications are designed, configured, and what resource definitions are needed to enable them to run on a new environment. These same tasks can be performed to port any basic CICS/DB2 application to a new zOS environment. 
+When you examine MortApp, you're gaining insights into the architecture and configuration requirements of CICS/DB2 applications for deployment in new environments. This knowledge is transferable, allowing you to apply similar principles and configurations when migrating other CICS/DB2 applications to different z/OS environments.
 
-As illustrated below, additional DevOps processes and tools can be integrated to support a full end-to-end DevOps workflow for early dev and test. 
+Integrating additional DevOps practices involves leveraging tools like Jenkins or IBM DBB for automated build processes, and implementing CI/CD pipelines to automate testing and deployment tasks. 
+
+By incorporating these tools and practices, you can establish an end-to-end DevOps workflow that enhances development efficiency, promotes collaboration, and improves the overall reliability of your applications across diverse z/OS environments. 
 <img src="images/waasdevops.png"  width="700">
