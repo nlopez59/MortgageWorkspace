@@ -36,7 +36,7 @@ Mainframe programs are written mostly in the Cobol programming language. Other m
  - They are designed to process large amounts of data in 'batches' without user interaction. 
  - JCL is like a script with a sequence of step(s) that makeup a job. 
  - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like Sort, DB2 bind...
- - Steps have one or more ```"DD DSN=???,..."``` lines which are Data Definitions (DD) used to create a new file or allocate an existing file by DataSet by Name (DSN).
+ - Steps have one or more ```"DD DSN=???,..."``` lines that are Data Definitions (DD) used to create a new file or allocate an existing file by DataSet by Name (DSN).
  - Applications process data in files or other format like DB2 tables, MQ Queues and a variety of other methods. 
  - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) to execute the program(s) in  each step(s). 
  - Some processes can run outside of JES like dbb-zappbuild. This java process runs under an SSH session without JCL and JES.  However, it allocates files and executes programs just like a JCL job.  
@@ -125,18 +125,18 @@ _Side Notes_
 This section outlines what and how the resources of a new application are defined in CICS using MortApp as an example. 
 
 #### CICS Transactions
-All CICS applications have a least one transaction which is used as a starting point: 
+All CICS applications have a least one transaction that is used as a starting point: 
   - EPSP is the MortApp **Transaction ID** (tranid). 
   - When EPSP its entered on a CICS terminal, CICS starts the main program EPSCMORT.   
   - EPSCMORT calls EPSMORT to send a Map to the user screen.
-  - The user enters data in the screen which is sent back to the main program.  
+  - The user enters data in the screen that is sent back to the main program.  
   - This can be repeated until the user enters PF3 to terminate the transaction.  
 <img src="images/pgmflow.png" width="700">
 
 
 #### CICS Resource Definitions  
 Transactions and all other CICS application resources are configured using the IBM batch utility [DFHCSDUP](https://www.ibm.com/docs/en/cics-ts/6.1?topic=resources-defining-dfhcsdup). The example JCL below shows the resource definitions needed for the MortApp:
-  - GROUP(EPSMTM) is used to define all related application resources.  CICS commands and global properties can be performed at the group level like the 'DELETE GROUP' command which removes all resources for the group.
+  - GROUP(EPSMTM) is used to define all related application resources.  CICS commands and global properties can be performed at the group level like the 'DELETE GROUP' command that removes all resources for the group.
   - [DB2CONN](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - is the DB2 subsystem and DB2 plan used to connect any DB2 program in the group to the DB2 subsystem name DBD1.
   - [DB2ENTRY](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - provides the default DB2 properties for all transactions in the group. 
   - MAPSET  - defines EPSMORT as the physical BMS load module. 
@@ -172,7 +172,7 @@ Example CICS STC running in WaaS 3.1
 
 CICS loads applications from the DFH**RPL** DD in its JCL. That DD is modified to include the load PDS(s) of all CICS applications. 
 
-Using dbb-zappbuild's "HLQ='DBB.POC'" will add MortApp load modules to a PDS called "DBB.POC.LOAD" PDS which is part of the RPL DD concatenation.
+Using dbb-zappbuild's "HLQ='DBB.POC'" will add MortApp load modules to a PDS called "DBB.POC.LOAD" PDS that is part of the RPL DD concatenation.
 <img src="images/rpl.png" width="700">
 
 This is a short-cut in deploying a load module during a DBB User Build. Typically, a Deployment server is used to copy a load module into an RPL lib. 
@@ -188,35 +188,37 @@ The batch job [newcopy.jcl](jcl/newcopy.jcl) can be used to run that command.
 
 #### The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
 The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the DB2CONN feature as shown below. This enables the attachment facility between CICS and DB2. 
-<img src="images/sip.png" width="500">  
+<img src="images/sip2.png" width="500">  
 <br/>   
 
 ## DB2 Application Configuration 
-As illustrated below, programs are defined to DB2 using a DB2 [Plan](https://www.ibm.com/docs/ru/db2-for-zos/12?topic=recovery-packages-application-plans). 
+Applications that use DB2 require several predefined resources like, data tables, a  plan and security.
 
-Plans are collections of DB2 packages. A package represents the DB2 resources used by a program.
-<img src="images/plan.png" alt="DB2 Plans and packages" width="600">  
+The diagram below shows how a plan is a collection of packages. Each represents the resources used by a program like a data table.
+<img src="images/plan.png" width="600">  
 
-When a DB2 program is _precompiled_, a DB2 Database Request Module (DBRM) artifact is created and [bound](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) to a package within a plan.   
+When a DB2 program is _precompiled_, a DB2 "Database Request Module" (DBRM) artifact is created and [bound](https://www.ibm.com/docs/en/db2-for-zos/12?topic=zos-binding-application-packages-plans) to a package within a plan.   
 
-[bind.jcl](jcl/bind.jcl) job binds the EPSCMORT package. 
--  The in-stream control cards for the bind utility follow the ```"SYSTSIN DD *"``` line. 
--  The ```'DSN SYSTEM(DBD1)'``` command  connects the job to the DB2 subsystem named DBD1.
--  ```'BIND PACKAGE(EPS) MEMBER(EPSCMORT)'``` reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD and performs the bind. 
--  A bind package must be performed each time a DB2 program is changed. 
--  The ```"BIND PLAN(EPSPLAN) PKLIST(EPS.*)"``` command:
-   -  creates the plan "EPSPLAN" which is used in the 'DB2CONN' resource defined by the DFHCSDUP job.
-   -  defines the plan's PKLIST "Package List" named "EPS.\*".   A PKLIST is a _collection_ of one or more packages for a plan. 
-
-<img src="images/epsbind.png"  width="700">  
+[bind.jcl](jcl/bind.jcl) is an example DB2 bind package job for the EPSCMORT program. 
+-  The ```"SYSTSIN DD *"``` in-stream control cards define: 
+   -  ```'DSN SYSTEM(DBD1)'``` command  that connects the job to the DB2 subsystem named DBD1.
+   -  ```'BIND PACKAGE(EPS) MEMBER(EPSCMORT)'``` reads the DBRM member EPSCMORT from the PDS allocated by the "DBRMLIB" DD and performs the bind. 
+   -  A bind package must be performed each time a DB2 program is changed. 
+  
+On a new environment, a DBA initializes an application's plan and grant the owning team access once.
+   - The ```"BIND PLAN(EPSPLAN) PKLIST(EPS.*)"``` db2 command creates plan "EPSPLAN" that is also used in the ```"DEFINE DB2CONN(DBD1)    GROUP(EPSMTM) PLAN(EPSPLAN) DB2ID(DBD1)"``` resource defined in the the DFHCSDUP job.
+   -  This command also defines the plan's PKLIST "Package List" named "EPS.\*".   A PKLIST is a _collection_ of one or more packages for a plan.   Once the plan is created, a developer simply runs the bind package job to apply new DBRMs when testing changes. 
+<img src="images/epsbind2.png"  width="500">  
 <br/><br/>
 
-
-**epsgrant.jcl** is run once to grant public (all users) access to execute the new EPSPLAN.  A grant is a DB2 command to manage access to resources. In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group owned by an application like, for example, EPS. 
-<img src="images/epsgrant.png"  width="700">  
-
-_Side Note_ 
-The above DB2 jobs require a System DBA to installed the DSNTEP2 utility described below. 
+   - The ```"GRANT EXECUTE ON PLAN EPSPLAN TO PUBLIC"``` grants public access to execute EPSPLAN.  - A grant is a DB2 command to manage access to resources. 
+   - In a WasS environment access can be given to all.  In a production environment, access is normally given to a RACF group assigned to an application like, for example, EPS. 
+<img src="images/epsgrant2.png"  width="500">  
+ 
+_Side Notes_ 
+- The create Plan and Grant are performed once by a DBA to initialize a new application.
+- The package bind job is performed by developers each time a DB2 programs is changed. 
+- These jobs require the DSNTEP2 utility described below. 
 
 
 ### DB2 System Layer
@@ -228,8 +230,9 @@ DBAs also maintain the DB2 subsystem which, like CICS, is a STC.  In the WaaS 3.
 <img src="images/db2stc.png"  width="500">
 
 
-On a new environment, the sample batch below is executed once to install the DB2 utility "DSNTEP2" that is used to define and update DB2 application resources like bind and grant: 
-<img src="images/dsntep2.png"  width="700">
+On a new environment, the sample batch job below is executed once to install the DB2 utility "DSNTEP2" that is used to define and update DB2 application resources like bind plan and grant: 
+<img src="images/dsntep2.png"  width="500">
+
 
 
 ## Resource Access Control Facility (RACF) - z/OS Security 
@@ -239,22 +242,21 @@ All processes run under an authenticated user ID.  CICS and TSO use a login scre
 
 STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user ID by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a high level of access privileges.  
 
-In a new zOS environment, authroization to connect [CICS to DB2](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) requesuire RACF permission. The example job below defines 2 facility class resources and the permissions to use them:
- - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1**'``` - defines a DB2 RACF resource name ending in **"DBD1"** which is the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1.
+In a new zOS environment, authroization to connect [CICS to DB2](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) requires RACF permission. The example job below defines 2 facility class resources and the permissions to use them:
+ - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.DBD1'``` - defines a resource name ending in **"DBD1"** that is the name of the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1.
     
-- ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE'``` defines a DB2 RACF resource name ending in **"EPSE"** which is the "DB2ENTRY(**EPSE**)" resource defined in DFHCSDUP.  Any name can be used as long as they match. 
+- ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE'``` defines a resource name ending in **"EPSE"** that is the "DB2ENTRY(**EPSE**)" resource name defined in DFHCSDUP.  Any name can be used as long as they match. 
    
 
 The 'PE' RACF commands create profiles to '**PE**rmit' user(s) access to a resource. This example permits the CICSUSER ID to connect to the DB2 instance DBD1 using the EPSE entry.
-<img src="images/racdef.png"  width="700">
+<img src="images/racdef2.png"  width="700">
+ 
 
-While DBA and CICS Admin are roles assigned to different people in most organizations, in a WaaS environment the default IBMUSER ID has the same RACF privileges to perform all the needed system and application initialization and configuration tasks to enable the MortApp or any application. 
+The System Security Admin role normally provides RACF access to all users in an organization including Admins. In a WaaS environment, the default RACF user, "IBMUSER", has special privileges  to perform all the system related tasks. 
 
 
 ## Summary
-Using the sample MortApp we covered the basic design, configurations, and tasks that are common across CICS/DB2 applications. These same tasks can be performed to port any basic CICS/DB2 application to a new zOS environment. 
-
-
+Using the sample MortApp we reviewed how CICS/DB2 applications are designed, configured, and what resource definitions are needed to enable them to run on a new environment. These same tasks can be performed to port any basic CICS/DB2 application to a new zOS environment. 
 
 As illustrated below, additional DevOps processes and tools can be integrated to support a full end-to-end DevOps workflow for early dev and test. 
 <img src="images/waasdevops.png"  width="700">
