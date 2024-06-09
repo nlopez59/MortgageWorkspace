@@ -239,8 +239,8 @@ All processes run under an authenticated user ID.  CICS and TSO use a login scre
 
 STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user ID by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a high level of access privileges.  
 
-In a new zOS environment, connectivity between [DB2 and CICS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) must be defined under RACF using the sample job below.  It creates 2 facility classes and the permissions need for that connection:
- - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.DBD1'``` - defines a DB2 RACF resource name ending in **"DBD1"** which is the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1.
+In a new zOS environment, authroization to connect [CICS to DB2](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) requesuire RACF permission. The example job below defines 2 facility class resources and the permissions to use them:
+ - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.**DBD1**'``` - defines a DB2 RACF resource name ending in **"DBD1"** which is the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1.
     
 - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE'``` defines a DB2 RACF resource name ending in **"EPSE"** which is the "DB2ENTRY(**EPSE**)" resource defined in DFHCSDUP.  Any name can be used as long as they match. 
    
@@ -252,9 +252,9 @@ While DBA and CICS Admin are roles assigned to different people in most organiza
 
 
 ## Summary
-Using the sample MortApp we covered the basic design, configurations, and tasks that are common across CICS/DB2 applications. These same tasks can be performed to port any CICS/DB2 application to a new zOS environment like a WaaS stock image. 
+Using the sample MortApp we covered the basic design, configurations, and tasks that are common across CICS/DB2 applications. These same tasks can be performed to port any basic CICS/DB2 application to a new zOS environment. 
 
 
 
-As illustrated below, additional DevOps processes and tools like Git, CI and CD can be intergated to support a full end-to-end DevOps workflow for early dev and test. 
+As illustrated below, additional DevOps processes and tools can be integrated to support a full end-to-end DevOps workflow for early dev and test. 
 <img src="images/waasdevops.png"  width="700">
