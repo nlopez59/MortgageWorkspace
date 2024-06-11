@@ -32,6 +32,7 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
   - Modernized CICS applications substitute 3270 screens with a web front-end and other methods to access  application back-end services. 
  
  Example CICS 3270 screen
+ 
  <img src="images/epsmap.png" width="400">
 
 ####  Batch Applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
