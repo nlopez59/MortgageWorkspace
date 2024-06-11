@@ -197,7 +197,7 @@ Application teams focus on the various parts of their application and work with 
 
 In addition to application level configurations, CICS Admins configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like MortApp on a new environment; the CICS Started Task and the CICS SIP. 
 
-#### The CICS Started Task** 
+#### The CICS Started Task 
 In simple terms, CICS runs like a batch job under JES, but with a key difference—it's a long-running job, similar to a Unix daemon task. This type of job is called a 'Started Task' (STC), which is configured to automatically start when z/OS is IPLed (Initial Program Load, also called boot).
 
 Example CICS STC running in WaaS 3.1
@@ -220,7 +220,7 @@ The batch job [newcopy.jcl](jcl/newcopy.jcl) can be used to run that command.
 
 
 
-#### The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)** 
+#### The CICS [SIP](https://www.ibm.com/docs/en/cics-ts/5.6?topic=areas-sip-system-initialization-program)
 The CICS 'System Initialization Program' file or SIP is the main configuration file.   In a new environment, it must be configured to enable the DB2CONN feature as shown below. This enables the attachment facility between CICS and DB2. 
 <img src="images/sip2.png" width="500">  
 <br/>   
