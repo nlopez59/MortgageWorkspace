@@ -144,6 +144,7 @@ _Side Notes_
  - A load module is another name for an executable program. Or the output artifact of the linkedit (binder) step of a build. They are also called API, stubs, binaries or objects. 
  - Load modules can be statically linked during the linkedit phase as explained above.  Or they can be dynamically called at runtime were the 'system' finds and loads the program for execution. 
  - The member name of a load module is typically the same as the input object deck. However, in some cases, the name can be changed using an 'alias' linkedit control card, which renames the output load module. One reason for doing this is to ensure backward compatibility. For example, the IBM MQ API starting with 'CSQ*' can also be called using the newer 'DFH*' prefix. This allows older build JCL that includes a 'CSQ' API to still work while newer builds can use the new prefix.   
+
 <img src="images/alias.png" width="600">
 
 
