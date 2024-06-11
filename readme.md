@@ -52,22 +52,44 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
 ## BBMM ***
 
 
-#### Build and Deploy
+### Build and Deploy
 A modern z/OS DevOps process typically utilizes IBM Dependency Based Build (DBB) and a deployment server like Urban Code Deploy. However, there are also other non-DevOps processes such as Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs.
 
-In general they all perform the following basic steps: 
-1. **Compile**: transforms source code into object code like the Cobol compiler. 
-
-2. **Linkage Edit (linkedit)**:  transforms object code into an executable load module. The linkage editor is also referred to as the binder and is not the same as the DB2 bind process. 
- 
-3. **Deploy**: 
-   - load module(s) are copied into a Library (Library and PDS are the same thing and are types of zOS file systems)
-   - for Online or Common services, a CICS Newcopy or DB2 Bind may be needed
-   - batch applications may require new or updated JCL 
-   - there are many other system resource defintions or updates like a DB2 table, a CICS screen that may be needed as part of a deployment
-   
+In general, they all perform the following basic steps: 
+| Step  | Desc |
+| ----- |----- |
+|Compile | transforms source code into object code like the Cobol compiler. |
+|Linkage Edit (linkedit) |transforms object code into an executable load module. The linkage editor is also referred to as the binder and is not the same as the DB2 bind process. |
+| Deploy | load module(s) are copied into a Library (Library and PDS are the same thing and are types of zOS file systems)
 
    
+Looking at the DBB build process provided by dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are passed to the compile and link steps (MVSExec) to produce a deployable load module
+
+**The compile step (method) allocate these DDs**
+| DD Name   | Purpose 
+|-----------|---------
+| SYSIN     | Input source file member in a source PDS 
+| SYSLIB    | Input source copybooks   
+| SYSLIN    | Output object deck       
+| SYSPRINT  | Output compiler log      
+
+**Linkedit step DDs**
+| DD Name   | Purpose                  
+|-----------|---------
+| SYSIN     | Input linked control cards (optional)    
+| SYSLIN    | Input Object deck from the compile step  
+| SYSLMOD   | Output load module member in a Load PDS used for Deployment  
+
+ <img src="images/zappbuild.png" width="800">
+
+_Side Notes_ 
+- For Online or Common services, a CICS Newcopy or DB2 Bind may be needed after each build.
+- Batch applications may require new or updated JCL. 
+- There are many other system resource definitions or updates like a DB2 table, a CICS screen that may be needed as part of a deployment. 
+
+
+
+
 ## Example CICS/DB2 Application Design - MortApp
 A basic [CICS/DB2 application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has business logic, a data layer, and screen(s) that are also called map(s) and various other system resources. 
 
@@ -77,8 +99,8 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - is the main program. 
    - it uses the ```"EXEC CICS SEND MAP ..."``` Cobol statement to call program **bms/epsmort**.   
    - it also uses ```"EXEC SQL ..."``` to access DB2 data. 
-   -  
-1. [epsmort.bms](MortgageApplication/bms/epsmort.bms) 
+  
+2. [epsmort.bms](MortgageApplication/bms/epsmort.bms) 
    - is a 3270 [BMS](https://www.ibm.com/docs/en/cics-ts/5.6?topic=programs-basic-mapping-support) program written in assembler language.  
    - the compiler creates 2 artifacts from this source code:
      - a symbolic copybook
@@ -86,10 +108,10 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - when EPSCMORT is built, the compiler allocates the copybook SYSLIB PDS and adds the source to the program
    - **Note** BMS copybooks are not stored in the application repo like other copybooks.  Instead they are stored in the PDS created during the DBB build of the BMS program.
   
-1. [Cobol/epscsmrt.cbl](MortgageApplication/Cobol/epscsmrt.cbl) 
+3. [Cobol/epscsmrt.cbl](MortgageApplication/Cobol/epscsmrt.cbl) 
    - is a subprogram called by EPSCMORT ```"EXEC CICS LINK PROGRAM( W-CALL-PROGRAM ) **COMMAREA**( W-COMMUNICATION-AREA )"``` to calculate a mortgage. 
 
-1. [copybook/epsmtcom.cpy](MortgageApplication/copybook/epsmtcom.cpy)  
+4. [copybook/epsmtcom.cpy](MortgageApplication/copybook/epsmtcom.cpy)  
    - is the COMMAREA used to exchange data between programs
    - in Cobol, they are included in each program from a shared copybook PDS
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
