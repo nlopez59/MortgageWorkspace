@@ -71,6 +71,7 @@ In general they all perform the following basic steps:
 ## Example CICS/DB2 Application Design - MortApp
 A basic [CICS/DB2 application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has business logic, a data layer, and screen(s) that are also called map(s) and various other system resources. 
 
+### CICS Source Files Types   
 The MortApp is designed with 4 types of source files; A main program, a map program, subprograms and COMMAREAs:
 1. [eps**c**mort.cbl](MortgageApplication/Cobol/epscmort.cbl#L149-L154) 
    - is the main program. 
