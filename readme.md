@@ -38,15 +38,15 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
 ####  Batch Applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
  - They are designed to process large amounts of data in 'batches' without user interaction. 
  - JCL is like a script with a sequence of step(s) that makeup a job. 
- - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like Sort, DB2 bind...
+ - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like a Compiler, Sort, DB2 bind and many others. 
  - Steps have one or more ```"DD DSN=???,..."``` lines that are Data Definitions (DD) used to create a new file or allocate an existing file by DataSet by Name (DSN).
- - Applications process data in files or other format like DB2 tables, MQ Queues and a variety of other methods. 
+ - Applications process data in files allocated in JCL or provided by other services DB2 tables, MQ Queues and a variety of other methods. 
  - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) to execute the program(s) in  each step(s). 
- - Some processes can run outside of JES like dbb-zappbuild. This java process runs under an SSH session without JCL and JES.  However, it allocates files and executes programs just like a JCL job.  
- - Security for all processes on zOS is managed by RACF - see below. 
+ - Some processes/programs can run outside of JES like a Rexx exec or a Java process. However, these programs also use DDs to allocate files like a JCL job.  
+ - Security for all processes on zOS is managed by RACF - see below for more details. 
 <br/> 
 
-   The example job below has one step to execute the IBM utility program IEFBR14. That step allocates a new DSN with the DD name of DD1. A new file is allocated with certain attributes like logical record size and disk space on a volume (disk).  The ```"SYSOUT=*"``` DDs are allocated by JES for program logs. 
+   The example JCL step below executes the IBM utility program IEFBR14. The step allocates a new DSN with the DD name of DD1. In this cases, a new file is allocated and cataloged with certain attributes like logical record size(lrecl) and disk space on a specific volume (hard drive).  The ```"SYSOUT=*"``` DDs are special allocations provided by JES for various logs. 
  <img src="images/jcl.png" width="500">
 
 
@@ -54,24 +54,25 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
 
 
 ### Build and Deploy
-A modern z/OS DevOps process typically utilizes IBM Dependency Based Build (DBB) and a deployment server like Urban Code Deploy. However, there are also other non-DevOps processes such as Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs.
+A modern z/OS DevOps process typically utilizes [IBM Dependency Based Build (DBB)](https://www.ibm.com/products/dependency-based-build) within a CI/CD workflow. However, there are also other non-DevOps processes such as Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs.
 
 In general, they all perform the following basic steps: 
 | Step  | Desc 
 | ----- |----- 
 |Compile | A compiler, like the Cobol compiler, transforms source code into object code. 
 |Linkage Edit (linkedit) | Transforms object code into an executable load module. Linkedit is also referred to as the binder step and is not the same as the DB2 bind process. 
-| Deploy | Load module(s) are packaged and copied (deployed) into a Load PDS on a host zOS environment like Dev, QA or Prod. 
+| Deploy | Load module(s) are packaged and copied (deployed) into a Load PDS on a host zOS environment like Dev, QA or Prod. For Online or Common services, a CICS Newcopy or DB2 Bind may be needed after each build and deploy. A full deployment may include many other artifacts. For example, it can include changes to JCL for a batch programs, a DB2 table's structure or a new field on a CICS screen. 
+
 
    
 Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are passed to the compile and link steps (MVSExec) to produce a deployable load module
 
-**The compile step (method) allocate these DDs**
+**The compile step (method) allocates these DDs**
 | DD Name   | Purpose 
 |-----------|---------
-| SYSIN     | Input source file as a member of PDS
+| SYSIN     | Input source file member of a PDS
 | SYSLIB    | Input source copybooks
-| SYSLIN    | Output object deck as a member of an Object PDS        
+| SYSLIN    | Output object deck member of an Object PDS        
 | SYSPRINT  | Output compiler log      
 
 **Linkedit step DDs**
@@ -79,21 +80,19 @@ Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snip
 |-----------|---------
 | SYSIN     | Input linked control cards (optional)    
 | SYSLIN    | Input Object deck from the compile step  
-| SYSLMOD   | Output load module member in a Load PDS used for Deployment  
+| SYSLMOD   | Output load module member of a Load PDS and used for Deployment  
+| SYSPRINT  | Output linkedit log    
 
  <img src="images/zappbuild.png" width="800">
 
 _Side Notes_ 
 - There are 2 basic PDS types; source and load:
-  - In zappbuild, program source, DBRM, and object deck PDSs are allocated (created) with these attributes ```srcOptions=dsorg(PO) recfm(F,B) lrecl(80) dsntype(library)```
-  - Load PDS is    ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) dsntype(library)```
-  - The main difference is the record format (recfm).  Source PDSs are defined as fixed(F,B) record format(recfm) with logical records(lrecl) of 80 bytes.  Load PDSs have an undefined (U) record format with records that can be up to 32760 bytes.
-  - The dataset organization(dsorg) of 'PO' defines these files are Partitioned Organization or PDS (Partitioned Dataset) for short.  
-  - There are 2 types of PDSs. The one used for modern builds is PDSE and defined with 'dsntype(library)'. The other is a traditional PDS with no dsntype and not used in DBB builds. 
+  - In dbb-zappbuild, program source, DBRM, and object deck PDSs are allocated (created) with the attributes ```srcOptions=dsorg(PO) recfm(F) lrecl(80) ```
+  - Load PDS is    ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) ```
+  - The main difference is the record format (recfm).  Source PDSs are defined as fixed(F,B) record format with logical records(lrecl) of 80 bytes.  Load PDSs have an undefined (U) record format with records that can be up to 32760 bytes.
+  - The dataset organization(dsorg) of 'PO' defines these files as  Partitioned Organization or PDS (Partitioned Dataset) for short.  As an analogy, a PDS is like folder on a PC with members that are like files within the folder.
   
-- For Online or Common services, a CICS Newcopy or DB2 Bind may be needed after each build.
-- Batch applications may require new or updated JCL. 
-- There are many other system resource definitions or updates like a DB2 table, a CICS screen that may be needed as part of a deployment. 
+
 
 
 
