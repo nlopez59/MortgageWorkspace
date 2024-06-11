@@ -32,7 +32,7 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
   - Modernized CICS applications substitute 3270 screens with a web front-end and other methods to access  application back-end services. 
  
  Example CICS 3270 screen
- 
+
  <img src="images/epsmap.png" width="400">
 
 ####  Batch Applications run using [Job Control Language - JCL](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing).  
@@ -57,14 +57,14 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
 A modern z/OS DevOps process typically utilizes IBM Dependency Based Build (DBB) and a deployment server like Urban Code Deploy. However, there are also other non-DevOps processes such as Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs.
 
 In general, they all perform the following basic steps: 
-| Step  | Desc |
-| ----- |----- |
-|Compile | transforms source code into object code like the Cobol compiler. |
-|Linkage Edit (linkedit) |transforms object code into an executable load module. The linkage editor is also referred to as the binder and is not the same as the DB2 bind process. |
-| Deploy | load module(s) are copied into a Library (Library and PDS are the same thing and are types of zOS file systems)
+| Step  | Desc 
+| ----- |----- 
+|Compile | A compiler ,like the Cobol compiler, transforms source code into object code. 
+|Linkage Edit (linkedit) | Transforms object code into an executable load module. Linkedit is also referred to as the binder step and is not the same as the DB2 bind process. 
+| Deploy | Load module(s) are packaged and copied (deployed) into a Load PDS on a host zOS environment like Dev, QA or Prod. 
 
    
-Looking at the DBB build process provided by dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are passed to the compile and link steps (MVSExec) to produce a deployable load module
+Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are passed to the compile and link steps (MVSExec) to produce a deployable load module
 
 **The compile step (method) allocate these DDs**
 | DD Name   | Purpose 
