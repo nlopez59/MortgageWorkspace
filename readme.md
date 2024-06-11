@@ -87,10 +87,10 @@ Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snip
 
 _Side Notes_ 
 - There are 2 basic PDS types; source and load:
-  - In dbb-zappbuild, program source, DBRM, and object deck PDSs are allocated (created) with the attributes ```srcOptions=dsorg(PO) recfm(F) lrecl(80) ```
-  - Load PDS is    ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) ```
-  - The main difference is the record format (recfm).  Source PDSs are defined as fixed(F,B) record format with logical records(lrecl) of 80 bytes.  Load PDSs have an undefined (U) record format with records that can be up to 32760 bytes.
-  - The dataset organization(dsorg) of 'PO' defines these files as  Partitioned Organization or PDS (Partitioned Dataset) for short.  As an analogy, a PDS is like folder on a PC with members that are like files within the folder.
+  - In dbb-zappbuild, source PDSs for program, DBRM, and object deck are allocated (created) with the attributes ```srcOptions=dsorg(PO) recfm(F) lrecl(80) ```
+  - Load PDS is ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) ```
+  - The main difference between source and load PDSs is the record format (recfm).  Source PDSs have a fixed(F,B) record format with logical records(lrecl) of 80 bytes.  Load PDSs have an undefined (U) record format with records that can be up to 32760 bytes.
+  - The dataset organization(dsorg) of 'PO' defines these files as  Partitioned Organization or PDS (Partitioned Dataset) for short.  As an analogy, a PDS is like a folder on a PC with members that are like files within the folder.
   
 
 
