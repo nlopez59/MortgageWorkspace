@@ -183,6 +183,7 @@ As a final step, MortApp is added (installed) once to CICS with the  commands:
   - ```'CEDA INSTALL DB2CONN(DBD1)'``` installs the DB2 Connect resource
 
 Use the CICS command ```"CEDA DISPLAY GROUP(EPSMTM)"``` to view the installed definitions for the MortApp group:
+
 <img src="images/ceda1.png" width="700">
  
 
