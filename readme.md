@@ -184,7 +184,7 @@ As a final step, MortApp is added (installed) once to CICS with the  commands:
 
 Use the CICS command ```"CEDA DISPLAY GROUP(EPSMTM)"``` to view the installed definitions for the MortApp group:
 
-<img src="images/ceda1.png" width="700">
+ <img src="images/ceda1.png" width="700">
  
 
 As shown above, tab over to an entry and enter **V** to view more details:
