@@ -68,7 +68,7 @@ In general they all perform the following basic steps:
    
 
    
-## MortApp Design 
+## Example CICS/DB2 Application Design - MortApp
 A basic [CICS/DB2 application](https://www.ibm.com/docs/en/cics-ts/5.6?topic=fundamentals-cics-applications) has business logic, a data layer, and screen(s) that are also called map(s) and various other system resources. 
 
 The MortApp is designed with 4 types of source files; A main program, a map program, subprograms and COMMAREAs:
