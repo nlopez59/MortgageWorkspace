@@ -95,7 +95,7 @@ The MortApp is designed with 4 types of source files; A main program, a map prog
    - COMMAREAs are designed  for this application. It includes 2 other copybooks; one for input the other for output data structures
 
 
-#### CICS API
+### CICS API
 Let's see how an API call is created from the Cobol source code [```"EXEC CICS SEND MAP('EPMENU') MAPSET('EPSMORT') ..."```](MortgageApplication/Cobol/epscmort.cbl#L149-L154) in EPSCMORT: 
 
 - At compile time, the command is _translated_ into a CICS API service call. 
@@ -103,7 +103,7 @@ Let's see how an API call is created from the Cobol source code [```"EXEC CICS S
 - At runtime, when EPSCMORT issues the 'Send Map' command, the CICS API loads and executes the EPSMORT BMS program to display its 3270 map (map and screen are the same thing).  
 
 
-#### DB2 API
+### DB2 API
 DB2 on z/OS is an IBM product that provides common database services to interactive and batch applications. Programmers use Structured Query Language (SQL) to read from and write to DB2 tables using DB2 APIs.
 
 - At compile time, all ```"EXEC SQL ..."``` source code statements are _precompiled_ into DB2 API calls. 
@@ -125,10 +125,10 @@ _Side Notes_
 <img src="images/alias.png" width="600">
 
 
-## CICS Application Resource Definitions  
+## CICS  Resource Definitions  
 This section outlines how the resources of a new application are defined in CICS, using MortApp as an example.
 
-#### CICS Transactions
+### Application Architecture  - MortApp
 All CICS applications have a least one transaction that is used as a starting point: 
   - EPSP is the MortApp **Transaction ID** (tranid). 
   - When EPSP its entered on a CICS terminal, CICS starts the main program EPSCMORT.   
@@ -138,7 +138,7 @@ All CICS applications have a least one transaction that is used as a starting po
 <img src="images/pgmflow.png" width="700">
 
 
-#### CICS Resource Definitions  
+### Defining Application Level Resources (DFHCSDUP/CEMT)  
 Transactions and all other CICS application resources are configured using the IBM batch utility [DFHCSDUP](https://www.ibm.com/docs/en/cics-ts/6.1?topic=resources-defining-dfhcsdup). The example JCL below shows the resource definitions needed for the MortApp:
   - GROUP(EPSMTM) is used to define all related application resources.  CICS commands and global properties can be performed at the group level like the 'DELETE GROUP' command that removes all resources for the group.
   - [DB2CONN](https://www.ibm.com/docs/en/cics-ts/6.1?topic=sources-defining-cics-db2-connection) - is the DB2 subsystem and DB2 plan used to connect any DB2 program in the group to the DB2 subsystem name DBD1.
@@ -148,7 +148,6 @@ Transactions and all other CICS application resources are configured using the I
   
 <img src="images/dfhcsdup.png" width="700">
 
-#### Installing a CICS Application Definition
 As a final step, MortApp is added (installed) once to CICS with the  commands:
   - ```'CEDA INSTALL GROUP(EPSMTM)'``` installs the MortApp group 
   - ```'CEDA INSTALL DB2CONN(DBD1)'``` installs the DB2 Connect resource
@@ -162,7 +161,7 @@ As shown above, tab over to an entry and enter **V** to view more details:
 
 
 
-## The CICS System Layer 
+### Defining CICS System Layer Resources  
 Application teams focus on the various parts of their application and work with Systems Admins to define the resources needed to run their code. 
 
 In addition to application level configurations, CICS Admins configure system-wide settings used across all applications.  The list of things they do is extensive.  But for our example, there are 2 key components needed to enable a new application like MortApp on a new environment; the CICS Started Task and the CICS SIP. 
@@ -181,7 +180,7 @@ Using dbb-zappbuild's "HLQ='DBB.POC'" will add MortApp load modules to a PDS cal
 
 This is a short-cut in deploying a load module during a DBB User Build. Typically, a Deployment server is used to copy a load module into an RPL lib. 
 
-#### CICS Newcopy 
+#### What is a CICS Newcopy 
 When EPSP is started, CICS loads and executes program EPSCMORT from the RPL lib. 
 
 For performance reasons, CICS caches loaded programs in memory.  During early dev and test, as new versions of a program are tested, the CICS command  ```'CEMT SET PROG(EPSCMORT) NEWCOPY'``` is required to reload the module from the RPL and refresh CICS's cache. 
@@ -198,6 +197,7 @@ The CICS 'System Initialization Program' file or SIP is the main configuration f
 ## DB2 Application Configuration 
 Applications that use DB2 require several predefined resources like, data tables, a  plan and security.
 
+### DB2 Application Plan & Package 
 The diagram below shows how a plan is a collection of packages. Each represents the resources used by a program like a data table.
 <img src="images/plan.png" width="600">  
 
@@ -225,7 +225,7 @@ _Side Notes_
 - These jobs require the DSNTEP2 utility described below. 
 
 
-## DB2 System Layer
+### Defining Basic DB2 System Resources 
 Developers collaborate with DB2 System Administrators (DBAs) to define DB2 resources such as tables, stored procedures, plans, packages, and other objects related to their applications.
 
 DBAs also maintain the DB2 subsystem, which, like CICS, is a Started Task (STC). In the WaaS 3.1 stock image, the DB2 STC job name starts with the prefix DBD1. DB2 has several supporting STCs with the same prefix that provide various services.
@@ -245,7 +245,8 @@ All processes run under an authenticated user ID.  CICS and TSO use a login scre
 
 STCs like CICS, DB2, UCD Agent, pipeline runners are assigned a RACF user ID by the zOS Security Admins.  This special ID is called a [protected account](https://www.ibm.com/docs/no/zos/2.4.0?topic=users-defining-protected-user-ids) and they tend to have a high level of access privileges.  
 
-In a new zOS environment, authroization to connect [CICS to DB2](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) requires RACF permission. The example job below defines 2 facility class resources and the permissions to use them:
+### Connecting CICS and DB2 
+In a new zOS environment, authorization to connect [CICS to DB2](https://www.ibm.com/docs/en/cics-ts/5.6?topic=interface-overview-how-cics-connects-db2) requires RACF permission. The example job below defines 2 facility class resources and the permissions to use them:
  - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.DBD1'``` - defines a resource name ending in **"DBD1"** that is the name of the "DB2CONN=**DBD1**" resource defined in the DFHCSDUP job. "DBD1" is an example name. Any name can be used as long as they match.  This example uses the DB2 subsystem name DBD1.
     
 - ```'RDEFINE FACILITY DFHDB2.AUTHTYPE.EPSE'``` defines a resource name ending in **"EPSE"** that is the "DB2ENTRY(**EPSE**)" resource name defined in DFHCSDUP.  Any name can be used as long as they match. 
