@@ -12,7 +12,7 @@ For those new to z/OS application development, exploring the IBM sample CICS/DB2
 Additionally, external reference material is provided to supplement your learning and provide further insights into z/OS application development concepts.
 
 ### zOS Application Infrastructure Services
-The diagram below illustrates the different software layers used by mainframe applications.  
+The diagram below illustrates the different software layers used to support mainframe applications.  
 - zOS is the operating system, shown at the bottom, that supervises applications, subsystems (middleware) and the hardware (not shown). Systems Programmers install, patch, upgrade and tune this layer as well as support Systems Administrators and Developers.   
 
 - In the middle are online, common, and batch services, which are managed by various systems administrators with specialized skills to configure, secure, and tune these services. They also support application teams during development and operations.
@@ -39,29 +39,36 @@ Mainframe programs are mostly written in the COBOL programming language. Other m
  - They are designed to process large amounts of data in 'batches' without user interaction. 
  - JCL is like a script with a sequence of step(s) that makeup a job. 
  - The JCL line ```"EXEC PGM=???"``` defines a step and the program it will EXECute like an application program or utility like a Compiler, Sort, DB2 bind and many others. 
- - Steps have one or more ```"DD DSN=???,..."``` lines that are Data Definitions (DD) used to create a new file or allocate an existing file by DataSet by Name (DSN).
- - Applications process data in files allocated in JCL or provided by other services DB2 tables, MQ Queues and a variety of other methods. 
- - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) to execute the program(s) in  each step(s). 
- - Some processes/programs can run outside of JES like a Rexx exec or a Java process. However, these programs also use DDs to allocate files like a JCL job.  
- - Security for all processes on zOS is managed by RACF - see below for more details. 
+ - Steps have one or more ```"DD DSN=???,..."``` lines that are Data Definitions (DDs) used to create a new file or allocate an existing file by DataSet Name (DSN).
+ - Applications process datasets allocated in JCL or provided by other services like DB2 tables, MQ Queues or a variety of other methods. 
+ - Jobs are submitted to the [Job Entry Subsystem - JES](https://www.ibm.com/docs/en/zos-basic-skills?topic=jobs-what-is-batch-processing) that executes the step(s).   
+ - Some processes/programs can run outside of JES like a Rexx exec or a Java process. However, these programs also use DDs to allocate traditional MVS files like a JCL job.  
+ - Security for all JCL or non-JCL processes on zOS is enforced by RACF - see below for more details. 
 <br/> 
 
-   The example JCL step below executes the IBM utility program IEFBR14. The step allocates a new DSN with the DD name of DD1. In this cases, a new file is allocated and cataloged with certain attributes like logical record size(lrecl) and disk space on a specific volume (hard drive).  The ```"SYSOUT=*"``` DDs are special allocations provided by JES for various logs. 
+## BBMM ***
+
+In this example JCL, a step executes the 'BILL001' batch application program that resides in the DSN allocated by the 'STEPLIB DD'. This program reads data from the file allocated by the 'INPUT DD' and produces a report using the 'REPORT DD'. The 'SYSOUT=*' keyword is a special type of file allocated by JES. 
+ <img src="images/jcl2.png" width="500">
+   
+
+ This JCL executes the IBM COBOL Compiler utility program ['IGYCRCTL'](https://www.ibm.com/docs/en/cobol-zos/6.2?topic=jcl-writing-compile-programs). Except for the 'STEPLIB', several DDs are used to allocate input and output files used by the compiler.
  <img src="images/jcl.png" width="500">
 
 
-## BBMM ***
+
+
 
 
 ### Build and Deploy
 A modern z/OS DevOps process typically utilizes [IBM Dependency Based Build (DBB)](https://www.ibm.com/products/dependency-based-build) within a CI/CD workflow. However, there are also other non-DevOps processes such as Endevor and Changeman that can build and deploy mainframe applications using traditional batch JCL jobs.
 
-In general, they all perform the following basic steps: 
+In general, they all perform the same basic steps: 
 | Step  | Desc 
 | ----- |----- 
 |Compile | A compiler, like the Cobol compiler, transforms source code into object code. 
 |Linkage Edit (linkedit) | Transforms object code into an executable load module. Linkedit is also referred to as the binder step and is not the same as the DB2 bind process. 
-| Deploy | Load module(s) are packaged and copied (deployed) into a Load PDS on a host zOS environment like Dev, QA or Prod. For Online or Common services, a CICS Newcopy or DB2 Bind may be needed after each build and deploy. A full deployment may include many other artifacts. For example, it can include changes to JCL for a batch programs, a DB2 table's structure or a new field on a CICS screen. 
+| Deploy | Load module(s) are packaged and copied (deployed) into a Load PDS on a host zOS environment like Dev, QA or Prod. For Online or Common services, a CICS Newcopy or DB2 Bind may be needed after each build and deploy. IMS applications have similar post-processing steps. A full deployment may include many other artifacts. For example, it can include changes to JCL for a batch programs, a DB2 table's structure or a new field on a CICS screen. 
 
 
    
@@ -206,10 +213,11 @@ Example CICS STC running in WaaS 3.1
 
 CICS loads applications from the DFH**RPL** DD in its JCL. That DD is modified to include the load PDS(s) of all CICS applications. 
 
-Using dbb-zappbuild's "HLQ='DBB.POC'" will add MortApp load modules to a PDS called "DBB.POC.LOAD" PDS that is part of the RPL DD concatenation.
+When using DBB's dbb-zappbuild framework, use the "HLQ='DBB.POC'" argument to store load artifacts into "DBB.POC.LOAD". That PDS must be included in the CICS JCL RPL DD concatenation. 
 <img src="images/rpl.png" width="700">
 
-This is a short-cut in deploying a load module during a DBB User Build. Typically, a Deployment server is used to copy a load module into an RPL lib. 
+Using DBB this way, is a shortcut for deploying a load module during a User Build. Normally, a Deployment server is used to copy a load module into an RPL library. 
+
 
 #### What is a CICS Newcopy 
 When EPSP is started, CICS loads and executes program EPSCMORT from the RPL lib. 
