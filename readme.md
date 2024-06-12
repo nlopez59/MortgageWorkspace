@@ -67,6 +67,8 @@ In general, they all perform the following basic steps:
    
 Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are passed to the compile and link steps (MVSExec) to produce a deployable load module
 
+ <img src="images/zappbuild.png" width="800">
+
 **The compile step (method) allocates these DDs**
 | DD Name   | Purpose 
 |-----------|---------
@@ -83,15 +85,13 @@ Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snip
 | SYSLMOD   | Output load module member of a Load PDS and used for Deployment  
 | SYSPRINT  | Output linkedit log    
 
- <img src="images/zappbuild.png" width="800">
-
 _Side Notes_ 
 - There are 2 basic PDS types; source and load:
-  - In dbb-zappbuild, source PDSs for program, DBRM, and object deck are allocated (created) with the attributes ```srcOptions=dsorg(PO) recfm(F) lrecl(80) ```
-  - Load PDS is ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) ```
-  - The main difference between source and load PDSs is the record format (recfm).  Source PDSs have a fixed(F,B) record format with logical records(lrecl) of 80 bytes.  Load PDSs have an undefined (U) record format with records that can be up to 32760 bytes.
-  - The dataset organization(dsorg) of 'PO' defines these files as  Partitioned Organization or PDS (Partitioned Dataset) for short.  As an analogy, a PDS is like a folder on a PC with members that are like files within the folder.
-  
+  - In dbb-zappbuild, source PDSs for program members, DBRMs, and object decks are allocated (created) with the attributes ```srcOptions=dsorg(PO) recfm(F) lrecl(80) ```
+  - Load uses ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) ```
+  - The main difference between source and load is the record format (recfm).  Source PDSs use a recfm(f) that defines a Fixed Logical Record Length(lrecl) of 80 bytes.  Load PDSs are defined with a recfm(u) or an Undefined record format. Each record in a member of a load PDS can be up to 32760 bytes - blksize(32760).  
+  - The dataset organization, dsorg(po), defines these datasets as  Partitioned Organization or PDS for Partitioned Dataset for short.  
+- Think of a PDS like a folder on a PC. The members in the PDS are like files in the folder. Each line in a file is a record, and it can be a fixed or undefined length.
 
 
 
