@@ -74,7 +74,7 @@ In general, they all perform the same basic steps:
    
 Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are allocated and passed from the compile to the linkedit step when producing a deployable load module.
 
-Just like a JCL step, this groovy code uses DBB's [MVSExec](https://www.ibm.com/docs/en/dbb/2.0?topic=commands-mvsexec) API to execute the Cobol and Linkage Editory programs.  
+Just like a JCL step, this groovy code uses DBB's [MVSExec](https://www.ibm.com/docs/en/dbb/2.0?topic=commands-mvsexec) API to execute the Cobol and Linkage Editor programs.  
  <img src="images/zappbuild.png" width="800">
  
  
@@ -86,8 +86,8 @@ Just like a JCL step, this groovy code uses DBB's [MVSExec](https://www.ibm.com/
 | TASKLIB   | The load PDS where the Cobol Compiler resides - like the 'STEPLIB' in JCL
 | SYSIN     | Input source file member of a PDS
 | SYSLIB    | Input source copybooks
-| SYSLIN    | Output object deck member of an Object PDS and passed to the linkedit 
-| DBRMLIB   | Output DB2 DBRM member for for DB2-based programs and used by a DB2 bind job.
+| SYSLIN    | Output object deck member of an Object PDS and passed to the linkedit step
+| DBRMLIB   | Output DB2 DBRM member for DB2-based programs and used by a DB2 bind job.
 | SYSPRINT  | Output compiler log      
 
 **Linkedit step DDs**
