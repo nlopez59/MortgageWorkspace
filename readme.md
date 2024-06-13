@@ -72,16 +72,22 @@ In general, they all perform the same basic steps:
 
 
    
-Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are passed to the compile and link steps (MVSExec) to produce a deployable load module
+Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snippet below, we can better understand how files are allocated and passed from the compile to the linkedit step when producing a deployable load module.
 
+Just like a JCL step, this groovy code uses DBB's [MVSExec](https://www.ibm.com/docs/en/dbb/2.0?topic=commands-mvsexec) API to execute the Cobol and Linkage Editory programs.  
  <img src="images/zappbuild.png" width="800">
+ 
+ 
 
 **The compile step (method) allocates these DDs**
+
 | DD Name   | Purpose 
 |-----------|---------
+| TASKLIB   | The load PDS where the Cobol Compiler resides - like the 'STEPLIB' in JCL
 | SYSIN     | Input source file member of a PDS
 | SYSLIB    | Input source copybooks
 | SYSLIN    | Output object deck member of an Object PDS        
+| DBRMLIB   | Output DB2 DBRM for only for DB2-based programs 
 | SYSPRINT  | Output compiler log      
 
 **Linkedit step DDs**
@@ -89,10 +95,13 @@ Looking at the DBB build process as shown in the dbb-zappbuild Cobol.groovy snip
 |-----------|---------
 | SYSIN     | Input linked control cards (optional)    
 | SYSLIN    | Input Object deck from the compile step  
+| SYSLIB    | Input Load PDS to include statically called application programs or subsystem APIs 
 | SYSLMOD   | Output load module member of a Load PDS and used for Deployment  
 | SYSPRINT  | Output linkedit log    
 
 _Side Notes_ 
+- Notice that the linkedit method does not include a 'TASKLIB' DD statement. In this case, the operating system looks for the program in a special cache called the linklist that contains the DSNs of frequently used PDSs. This is similar to how a Unix PATH environment variable works when the system searches for executable programs.
+  
 - There are 2 basic PDS types; source and load:
   - In dbb-zappbuild, source PDSs for program members, DBRMs, and object decks are allocated (created) with the attributes ```srcOptions=dsorg(PO) recfm(F) lrecl(80) ```
   - Load uses ```loadOptions=dsorg(PO) recfm(U)   blksize(32760) ```
