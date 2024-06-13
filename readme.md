@@ -84,19 +84,19 @@ Just like a JCL step, this groovy code uses DBB's [MVSExec](https://www.ibm.com/
 | DD Name   | Purpose 
 |-----------|---------
 | TASKLIB   | The load PDS where the Cobol Compiler resides - like the 'STEPLIB' in JCL
-| SYSIN     | Input source file member of a PDS
+| SYSIN     | Input member of a source PDS
 | SYSLIB    | Input source copybooks
-| SYSLIN    | Output object deck member of an Object PDS and passed to the linkedit step
-| DBRMLIB   | Output DB2 DBRM member for DB2-based programs and used by a DB2 bind job.
+| SYSLIN    | Output member of an object PDS and passed to the linkedit step
+| DBRMLIB   | Output member of a DB2 DBRM PDS used to bind DB2-based programs 
 | SYSPRINT  | Output compiler log      
 
 **Linkedit step DDs**
 | DD Name   | Purpose                  
 |-----------|---------
 | SYSIN     | Input linked control cards (optional)    
-| SYSLIN    | Input Object deck from the compile step  
-| SYSLIB    | Input Load PDS to include statically called application programs or subsystem APIs 
-| SYSLMOD   | Output load module member of a Load PDS and used for Deployment  
+| SYSLIN    | Input member of the object PDS passed from the compile step  
+| SYSLIB    | Input load PDSs to include statically called application programs or subsystem APIs 
+| SYSLMOD   | Output member(artifact) of an application's load PDS and used during deployment 
 | SYSPRINT  | Output linkedit log    
 
 _Side Notes_ 
