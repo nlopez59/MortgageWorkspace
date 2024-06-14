@@ -24,7 +24,7 @@ pipeline {
                 println '** Cloning on USS v2.1 ...'     
                 script {                    
                     sh '. /etc/profile ; set  '
-                    sh '. /etc/profile ; git clone ' + repo 
+                    sh '. /etc/profile ; git clone ' + repo " -b dxc"
                     sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'
                 }
             }          
