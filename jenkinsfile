@@ -2,13 +2,13 @@
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
 
 def myAgent  = 'dxc'
-def repo = 'git@github.com:nlopez1-ibm/poc-workspace.git'
+def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
 def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
-def appworkspace = 'poc-workspace'
-def appname = 'poc-app'
+def appworkspace = 'MortgageWorkspace'
+def appname = 'MortgageApplication'
 
 //def ucdPublish = '/u/ibmuser/waziDBB/dbb-v2/dbb-zappbuild/scripts/UCD/dbb-ucd-packaging.groovy' 
-def ucdPublish = '/u/ibmuser/waziDBB/dbb-v2/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
+def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
 def buzTool  = '/u/ibmuser/ibm-ucd/agent/bin/buztool.sh'
 def ucdComponent = 'poc-component'
 
@@ -25,8 +25,6 @@ pipeline {
                     sh 'rm -rf *'
                     sh 'git clone ' + repo 
                     sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'
-                    sh 'cd ' + appworkspace  + '; git clone  -b main ' + Common 
-                    
                 }
             }          
         }  
