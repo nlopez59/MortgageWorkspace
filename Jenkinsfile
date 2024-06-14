@@ -21,8 +21,9 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                println '** Cloning on USS v2...'     
+                println '** Cloning on USS v2.1 ...'     
                 script {                    
+                    sh '. /etc/profile ; set 
                     sh '. /etc/profile ; git clone ' + repo 
                     sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'
                 }
