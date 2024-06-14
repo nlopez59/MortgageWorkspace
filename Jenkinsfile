@@ -23,7 +23,7 @@ pipeline {
             steps {
                 println '** Cloning on USS v2.1 ...'     
                 script {                    
-                    sh 'rm -rf /tmp/jenkins-wkspace2'
+                    sh 'rm -rf /tmp/jenkins-wkspace2/workspace'
                     sh '. /etc/profile ; git clone ' + repo " -b dxc"
                     sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'
                 }
