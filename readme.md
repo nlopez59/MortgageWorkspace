@@ -78,14 +78,13 @@ Just like a JCL step, this groovy code uses DBB's [MVSExec](https://www.ibm.com/
  <img src="images/zappbuild.png" width="800">
  
  
-
 **The compile step (method) allocates these DDs**
 
 | DD Name   | Purpose 
 |-----------|---------
-| TASKLIB   | The load PDS where the Cobol Compiler resides - like the 'STEPLIB' in JCL
+| TASKLIB   | The load PDS where the Cobol compiler resides - like the 'STEPLIB' in JCL
 | SYSIN     | Input member of a source PDS
-| SYSLIB    | Input source copybooks
+| SYSLIB    | Input source copybook PDSs
 | SYSLIN    | Output member of an object PDS and passed to the linkedit step
 | DBRMLIB   | Output member of a DB2 DBRM PDS used to bind DB2-based programs 
 | SYSPRINT  | Output compiler log      
