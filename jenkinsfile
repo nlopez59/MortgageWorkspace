@@ -1,6 +1,6 @@
 // Sample Jenkinsfile using pGH, ssh and a waas for dxc poc  (Nlopez)
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
-// testing 
+// testing v2
 
 def myAgent  = 'dxc'
 def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
