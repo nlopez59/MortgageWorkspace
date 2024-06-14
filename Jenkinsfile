@@ -24,7 +24,7 @@ pipeline {
                 println '** Cloning on USS ...'     
                 script {
                     sh 'rm -rf *'
-                    sh 'git clone ' + repo 
+                    sh '. /etc/profile ; git clone ' + repo 
                     sh 'cd ' + appworkspace  + '; git log --graph --oneline --decorate -n 3'
                 }
             }          
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script { 
-                    sh 'groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8   -h ' + env.USER+'.JENKINS' + ' --impactBuild'                
+                    sh '. /etc/profile ; groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8   -h ' + env.USER+'.JENKINS' + ' --impactBuild'                
                 }
             }
         }
