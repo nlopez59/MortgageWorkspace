@@ -11,8 +11,8 @@ def appname = 'MortgageApplication'
 
 //def ucdPublish = '/u/ibmuser/waziDBB/dbb-v2/dbb-zappbuild/scripts/UCD/dbb-ucd-packaging.groovy' 
 def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
-def buzTool  = '/u/ibmuser/ibm-ucd/agent/bin/buztool.sh'
-def ucdComponent = 'poc-component'
+def buzTool  = '/u/ibmuser/ibm-ucd/bin/buztool.sh'
+def ucdComponent = 'dxc-component'
 
 // no changes required to this section 
 pipeline {
@@ -64,8 +64,10 @@ pipeline {
                 println  '** Package and Publish to UCDs CodeStation...'                  
                 script {
                     // sh 'groovyz ' + ucdPublish + ' --buztool ' + buzTool  + ' --workDir ${WORKSPACE}/'+appworkspace + ' --component ' + ucdComponent + ' --versionName ${BUILD_NUMBER}'
-                    //sh  ucdPublish + ' Jenkins_Build_${BUILD_NUMBER} ' + ucdComponent + ' ${WORKSPACE}/'+appworkspace  
-                    echo 'UCD Disabled for now'
+                    sh  """
+                        set +x
+                        "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"
+                        """                     
                 } 
             }
         }        
@@ -73,13 +75,14 @@ pipeline {
     
     post {
             always {
-                echo 'CICS Newcopy and uploading Logs ...'                    
-                sh """
-                    set +x
-                    . /etc/profile 
-                    opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
-                    opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
-                """
+                echo 'Uploading Logs ...'                    
+               // echo 'CICS Newcopy and uploading Logs ...'                    
+               // sh """
+               //     set +x
+               //     . /etc/profile 
+               //     opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
+               //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
+               // """
                 archiveArtifacts artifacts: '**/*.log', fingerprint: false                                
                 }
     }        
