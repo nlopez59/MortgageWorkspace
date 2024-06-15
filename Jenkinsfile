@@ -20,6 +20,18 @@ pipeline {
     options { skipDefaultCheckout(true) }
     
     stages {
+        stage('Pre Actions') {
+            steps {
+                script {
+                    // Run your shell commands here
+                    sh '''
+                    echo "Running pre-actions..."
+                    ls -las
+                    # Add your pre-action shell commands here
+                    '''
+                }
+            }
+        }
         stage('Clone') {
             steps {
                 println '** Clone ' + repo + ' Branch dxc ..' 
