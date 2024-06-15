@@ -61,9 +61,11 @@ pipeline {
 
         stage('Stage for Deploy') {
             steps {
-                println  '** Package and Publish to UCDs CodeStation...'                  
+                println  '** Publish to UCD ...'                  
                 script {                    
-                    "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}"  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"                    
+                    sh """ 
+                        "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}"  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"                    
+                    """
                 } 
             }
         }        
