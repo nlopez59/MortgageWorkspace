@@ -54,8 +54,8 @@ pipeline {
     
     post {
             always {
-                echo 'Saving Logs ...'
-                archiveArtifacts artifacts: '${WORKSPACE}/'+wkDir+'/'+appworkspace+'/**/*.log', fingerprint: false                
+                echo 'UPloading DBB App Build Logs (SYSPRINT) ...'
+                archiveArtifacts artifacts: '${WORKSPACE}/'+wkDir+'/*.log', fingerprint: false                                
                 }
     }        
 }
