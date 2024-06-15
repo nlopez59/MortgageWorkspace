@@ -26,7 +26,7 @@ pipeline {
                 println '** Cloning on USS v2.1 branch dxc...'     
                 script {                    
                     //sh 'rm -rf /tmp/workspace'
-                    sh '. /etc/profile ; mkdir 'wkDir '; cd  'wkDir';  git clone -b dxc ' + repo                    
+                    sh '. /etc/profile ; mkdir ' + wkDir + '; cd  ' + wkDir + ';  git clone -b dxc ' + repo                    
                 }
             }          
         }  
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script { 
-                    sh '. /etc/profile ; cd  'wkDir';  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                
+                    sh '. /etc/profile ; cd  ' + wkDir + ';  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                
                 }
             }
         }
