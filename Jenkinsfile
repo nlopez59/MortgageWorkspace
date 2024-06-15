@@ -66,7 +66,7 @@ pipeline {
                     // sh 'groovyz ' + ucdPublish + ' --buztool ' + buzTool  + ' --workDir ${WORKSPACE}/'+appworkspace + ' --component ' + ucdComponent + ' --versionName ${BUILD_NUMBER}'
                     sh  """
                         set +x
-                        "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"
+                        "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}"  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"
                         """                     
                 } 
             }
