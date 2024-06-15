@@ -54,9 +54,9 @@ pipeline {
     
     post {
             always {
-                echo 'Uploading DBB App ' +wkDir+' Logs (SYSPRINT) ...'    
+                echo 'Uploading DBB App ${BUILD_ID} Logs (SYSPRINT) ...'    
                 sh 'set'            
-                archiveArtifacts artifacts: 'build_${BUILD_NUMBER}/*.log', fingerprint: false                                
+                archiveArtifacts artifacts: '**/build_${BUILD_ID}/*.log', fingerprint: false                                
                 }
     }        
 }
