@@ -34,6 +34,8 @@ pipeline {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script { 
                     sh '. /etc/profile ;  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+wkDir+'/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+wkDir+'/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                
+                    sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSMORT) PH'"
+                    sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSCMORT) PH'"
                 }
             }
         }
