@@ -33,7 +33,7 @@ pipeline {
             steps {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script { 
-                    sh '. /etc/profile ; groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8   -h ' + env.USER+'.JENKINS' + ' --impactBuild'                
+                    sh '. /etc/profile ; groovyz ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                
                 }
             }
         }
