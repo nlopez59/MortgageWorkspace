@@ -23,7 +23,7 @@ pipeline {
             steps {
                 println '** Cloning on USS v2.1 branch dxc...'     
                 script {                    
-                    sh 'rm -rf /tmp/workspace'
+                    //sh 'rm -rf /tmp/workspace'
                     sh '. /etc/profile ; git clone -b dxc ' + repo                    
                 }
             }          
