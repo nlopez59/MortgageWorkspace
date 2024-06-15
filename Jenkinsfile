@@ -23,11 +23,11 @@ pipeline {
             steps {
                 script {
                     // Run your shell commands here
-                    sh '''
+                    sh """ 
                     echo "Cleaning up old logs ..."
                     rm -rf *
                     ls -las                    
-                    '''
+                    """
                 }
             }
         }
@@ -35,7 +35,12 @@ pipeline {
             steps {
                 println '** Clone ' + repo + ' Branch dxc ..' 
                 script {                                        
-                    sh set+ex '. /etc/profile ;  mkdir -p ' +wkDir+'; cd '+wkDir+ ' git clone -b dxc ' repo                                        
+                    sh """ 
+                        . /etc/profile 
+                        mkdir -p "${wkDir}"                         
+                        cd "${wkDir}"
+                        git clone -b dxc "${repo}"
+                    """
                 }
             }          
         }  
