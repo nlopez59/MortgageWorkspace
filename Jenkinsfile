@@ -55,7 +55,7 @@ pipeline {
     post {
             always {
                 echo 'Saving Logs ...'
-                archiveArtifacts artifacts: ${WORKSPACE}'/'+wkDir+'/'+appworkspace+'/**/*.log', fingerprint: false                
+                archiveArtifacts artifacts: '${WORKSPACE}/'+wkDir+'/'+appworkspace+'/**/*.log', fingerprint: false                
                 }
     }        
 }
