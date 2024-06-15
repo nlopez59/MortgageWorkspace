@@ -16,16 +16,15 @@ def ucdComponent = 'poc-component'
 
 // no changes required to this section 
 pipeline {
-    agent  { label myAgent } 
-    options { skipDefaultCheckout(true) }
-    
-    stages {
+    agent   { label myAgent } 
+    options { skipDefaultCheckout(true) }       
+    stages  {
         stage('Pre Actions') {
             steps {
                 script {
                     // Run your shell commands here
                     sh '''
-                    echo "Running pre-actions..."
+                    echo "Cleaning up old logs ..."
                     rm -rf *
                     ls -las                    
                     '''
@@ -36,7 +35,7 @@ pipeline {
             steps {
                 println '** Clone ' + repo + ' Branch dxc ..' 
                 script {                                        
-                    sh '. /etc/profile ;  mkdir -p ' +wkDir+'; cd '+wkDir+ ' git clone -b dxc ' repo                                        
+                    sh set+ex '. /etc/profile ;  mkdir -p ' +wkDir+'; cd '+wkDir+ ' git clone -b dxc ' repo                                        
                 }
             }          
         }  
