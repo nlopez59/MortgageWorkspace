@@ -74,8 +74,12 @@ pipeline {
     post {
             always {
                 echo 'CICS Newcopy and uploading Logs ...'                    
-                sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSMORT) PH' > /dev/null 2>&1"
-                sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSCMORT) PH'> /dev/null 2>&1"
+                sh """
+                    set +x
+                    . /etc/profile 
+                    opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
+                    opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
+                """
                 archiveArtifacts artifacts: '**/*.log', fingerprint: false                                
                 }
     }        
