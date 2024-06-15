@@ -40,9 +40,9 @@ pipeline {
                         set +x
                         set +e
                         . /etc/profile 
-                        mkdir  + wkDir + 
+                        mkdir -p wkDir 
                         cd   wkDir 
-                        git clone -b dxc ' + repo                    
+                        git clone -b dxc  repo                    
                     '''
                 }
             }          
