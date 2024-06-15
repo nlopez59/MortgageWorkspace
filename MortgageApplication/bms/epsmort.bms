@@ -36,7 +36,7 @@ MSGERR  DFHMDF POS=(24,15),ATTRB=(PROT,NORM),LENGTH=40,                X00340000
                INITIAL='Hi'                                             00350000
          DFHMDF POS=(2,48),LENGTH=0,                                   *
                ATTRB=ASKIP
-         DFHMDF POS=(5,25),LENGTH=26,INITIAL='UCD1  MORT    CALC',     *
+         DFHMDF POS=(5,25),LENGTH=26,INITIAL='UCD   MORT    CALC',     *
                ATTRB=(ASKIP,BRT)
 EPSMORT  DFHMSD TYPE=FINAL                                               0036000
         END                                                             00370000
