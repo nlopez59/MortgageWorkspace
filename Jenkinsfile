@@ -1,6 +1,5 @@
 // Sample Jenkinsfile using pGH, ssh and a waas for dxc poc  (Nlopez)
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
-// testing v2
 
 def myAgent  = 'dxc'
 def wkDir = 'build_${BUILD_NUMBER}'
@@ -35,7 +34,7 @@ pipeline {
             steps {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script { 
-                    sh '. /etc/profile ; cd  ' + wkDir + ';  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                
+                    sh '. /etc/profile ;  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                
                 }
             }
         }
