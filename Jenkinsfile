@@ -36,14 +36,7 @@ pipeline {
             steps {
                 println '** Clone ' + repo + ' Branch dxc ..' 
                 script {                                        
-                    sh '''
-                        set +x
-                        set +e
-                        . /etc/profile 
-                        mkdir -p wkDir 
-                        cd   wkDir 
-                        git clone -b dxc  repo                    
-                    '''
+                    sh '. set +x; set +e; /etc/profile ; mkdir -p ' +wkDir+'; cd '+wkDir+ ' git clone -b dxc ' repo                                        
                 }
             }          
         }  
