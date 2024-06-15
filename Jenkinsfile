@@ -62,12 +62,8 @@ pipeline {
         stage('Stage for Deploy') {
             steps {
                 println  '** Package and Publish to UCDs CodeStation...'                  
-                script {
-                    // sh 'groovyz ' + ucdPublish + ' --buztool ' + buzTool  + ' --workDir ${WORKSPACE}/'+appworkspace + ' --component ' + ucdComponent + ' --versionName ${BUILD_NUMBER}'
-                    sh  """
-                        set +x
-                        "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}"  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"
-                        """                     
+                script {                    
+                    "${ucdPublish}" Jenkins_Build_"${BUILD_NUMBER}"  dxc-component "${WORKSPACE}"/"${wkDir}"/"${appworkspace}"                    
                 } 
             }
         }        
