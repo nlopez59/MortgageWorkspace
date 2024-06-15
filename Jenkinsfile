@@ -54,9 +54,8 @@ pipeline {
     
     post {
             always {
-                echo 'Uploading DBB App ' +wkDir+' Logs (SYSPRINT) ...'
-                sh 'pwd; ls -las'
-                archiveArtifacts artifacts: wkDir+'/'+appworkspace+'/*.log', fingerprint: false                                
+                echo 'Uploading DBB App ' +wkDir+' Logs (SYSPRINT) ...'                
+                archiveArtifacts artifacts: 'build_${BUILD_NUMBER}/*.log', fingerprint: false                                
                 }
     }        
 }
