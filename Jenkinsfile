@@ -27,8 +27,7 @@ pipeline {
                     sh '''
                     echo "Running pre-actions..."
                     rm -rf *
-                    ls -las
-                    # Add your pre-action shell commands here
+                    ls -las                    
                     '''
                 }
             }
@@ -37,7 +36,14 @@ pipeline {
             steps {
                 println '** Clone ' + repo + ' Branch dxc ..' 
                 script {                                        
-                    sh '. /etc/profile ; mkdir ' + wkDir + '; cd  ' + wkDir + ';  git clone -b dxc ' + repo                    
+                    sh '''
+                        set +x
+                        set +e
+                        . /etc/profile 
+                        mkdir  + wkDir + 
+                        cd   wkDir 
+                        git clone -b dxc ' + repo                    
+                    '''
                 }
             }          
         }  
@@ -46,7 +52,7 @@ pipeline {
             steps {
                 println  '** Building with DBB in Impact Mode ...'                  
                 script { 
-                    sh '. /etc/profile ;  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+wkDir+'/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+wkDir+'/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                                    
+                    sh 'set +x; set+e; . /etc/profile ;  groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ' + dbbbuild + ' -w ${WORKSPACE}/'+wkDir+'/'+appworkspace  + ' -a ' + appname + ' -o ${WORKSPACE}/'+wkDir+'/'+appworkspace + ' -l UTF-8  -h DBB.POC --impactBuild'                                    
                 }
             }
         }
@@ -66,8 +72,8 @@ pipeline {
     post {
             always {
                 echo 'CICS Newcopy and uploading Logs ...'                    
-                sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSMORT) PH' > EPSMORT_CEMT.log"
-                sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSCMORT) PH'> EPSCMORT_CEMT.log"
+                sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSMORT) PH' > /dev/null 2>&1"
+                sh ". /etc/profile ;  opercmd 'F CICSTS61,CEMT SET PROG(EPSCMORT) PH'> /dev/null 2>&1"
                 archiveArtifacts artifacts: '**/*.log', fingerprint: false                                
                 }
     }        
