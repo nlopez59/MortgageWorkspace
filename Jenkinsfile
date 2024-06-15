@@ -26,6 +26,7 @@ pipeline {
                     // Run your shell commands here
                     sh '''
                     echo "Running pre-actions..."
+                    rm -rf *
                     ls -las
                     # Add your pre-action shell commands here
                     '''
