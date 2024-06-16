@@ -53,7 +53,8 @@ pipeline {
                     . /etc/profile 
                     groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "${dbbbuild}" -w "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -a "${appname}"  -o "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -l UTF-8  -h DBB.POC --impactBuild                                    
                     """
-                archiveArtifacts artifacts: '**/*.log' 
+                
+                archiveArtifacts artifacts: '${WORKSPACE}/${wkDir}/${appworkspace}/*.log' 
                 }
             }
         }
@@ -61,9 +62,10 @@ pipeline {
         stage('Stage for Deploy') {
             steps {
                 println  '** Publish to UCD ...'                  
-                script {                    
+                script {     
                     sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${WORKSPACE}/${wkDir}/${appworkspace}"                                      
                 } 
+                archiveArtifacts artifacts: '${WORKSPACE}/${wkDir}/${appworkspace}/*.output' 
             }
         }        
     }   
