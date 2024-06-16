@@ -34,7 +34,7 @@ pipeline {
                 println '** Clone ' + repo + ' Branch dxc ..' 
                 script {                                        
                     sh """ 
-                        set -x
+                        set +x
                         . /etc/profile 
                         mkdir -p "${wkDir}"
                         cd "${wkDir}"
@@ -49,12 +49,14 @@ pipeline {
                 println  "** Building with DBB in Impact Mode ... ${WORKSPACE}/${wkDir}/${appworkspace}/*.log"
                 script { 
                     sh """
-                    set -x
+                    set +x
                     . /etc/profile 
                     groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "${dbbbuild}" -w "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -a "${appname}"  -o "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -l UTF-8  -h DBB.POC --impactBuild                                    
                     """
-                
-                archiveArtifacts artifacts: "${WORKSPACE}/${wkDir}/${appworkspace}/*.log"
+
+                    sh " ls -las ${WORKSPACE}/${wkDir}/${appworkspace}/*.log"
+                    
+                    archiveArtifacts artifacts: "${WORKSPACE}/${wkDir}/${appworkspace}/*.log"
 
 
                 }
