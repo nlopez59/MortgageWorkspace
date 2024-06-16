@@ -8,6 +8,8 @@ def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
 def appworkspace = 'MortgageWorkspace'
 def appname = 'MortgageApplication'
 
+def buildFolder = env.WORKSPACE
+
 
 //def ucdPublish = '/u/ibmuser/waziDBB/dbb-v2/dbb-zappbuild/scripts/UCD/dbb-ucd-packaging.groovy' 
 def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
@@ -74,7 +76,7 @@ pipeline {
     
     post {
             always {
-                def buildFolder = env.WORKSPACE
+              
                 echo "The build folder is: ${buildFolder}"
                 
                 // Perform actions with the build folder
