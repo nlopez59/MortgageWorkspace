@@ -30,7 +30,8 @@ pipeline {
                     // ls -las 
                     
                     sh """ 
-                    pwd           
+                    pwd     
+                    cd   ${buildFolder} 
                     ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf                 
                     """
                 }
