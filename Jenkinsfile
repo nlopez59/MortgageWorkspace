@@ -22,11 +22,12 @@ pipeline {
         stage('Pre Actions') {
             steps {
                 script {
-                    // Run your shell commands here
+                    // Remove build for all runs  - keey last 3
                     sh """ 
-                    echo "Cleaning up old logs ..."
-                    rm -rf *
-                    ls -las                    
+                    //echo "Cleaning up old logs ..."
+                    //rm -rf *
+                    //ls -las           
+                    ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf                 
                     """
                 }
             }
