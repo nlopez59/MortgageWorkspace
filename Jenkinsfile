@@ -46,7 +46,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                println  "** Building with DBB in Impact Mode ... ${WORKSPACE}/${wkDir}/${appworkspace}/*.log"
+                println  "** Building with DBB in Impact Mode ... "
                 script { 
                     sh """
                     set +x
@@ -56,7 +56,7 @@ pipeline {
 
                     sh " ls -las ${WORKSPACE}/${wkDir}/${appworkspace}"
 
-                    archiveArtifacts artifacts: "${WORKSPACE}/${wkDir}/${appworkspace}/**.log"
+                    archiveArtifacts artifacts: "${WORKSPACE}/${wkDir}/${appworkspace}/*.*.log"
 
 
                 }
