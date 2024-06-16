@@ -2,13 +2,12 @@
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
 
 def myAgent  = 'dxc'
-def wkDir = 'build_${BUILD_NUMBER}'
+def wkDir = '${WORKSPACE}/build_${BUILD_NUMBER}'
 def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
 def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
 def appworkspace = 'MortgageWorkspace'
 def appname = 'MortgageApplication'
 
-def buildFolder = env.WORKSPACE
 
 
 //def ucdPublish = '/u/ibmuser/waziDBB/dbb-v2/dbb-zappbuild/scripts/UCD/dbb-ucd-packaging.groovy' 
@@ -30,9 +29,8 @@ pipeline {
                     // ls -las 
                     
                     sh """ 
-                    env  | sort 
-                    pwd     
-                    cd   ${buildFolder} 
+
+                    cd   ${wkDir} 
                     ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf                 
                     """
                 }
@@ -78,14 +76,7 @@ pipeline {
     
     post {
             always {
-              
-                echo "The build folder is: ${buildFolder}"
-                
-                // Perform actions with the build folder
-                // For example, list files in the build folder
-                sh "ls -la ${buildFolder}"
-
-                echo 'Uploading Logs ...  ${buildFolder}'                    
+                echo 'Uploading Logs ...  ${wkDir}'                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
                //     set +x
