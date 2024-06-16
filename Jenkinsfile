@@ -70,7 +70,7 @@ pipeline {
     post {
             always {
                                 
-                echo 'Uploading Logs ...  ${wkDir}'                    
+                echo "Uploading Logs ...  '${WORKSPACE}/${wkDir}/${appworkspace}/*.log"                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
                //     set +x
