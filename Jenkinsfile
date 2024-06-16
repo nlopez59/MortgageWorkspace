@@ -36,6 +36,7 @@ pipeline {
                     sh """ 
                         set -x
                         . /etc/profile 
+                        mkdir -p " ${wkDir}"
                         cd "${wkDir}"
                         git clone -b dxc "${repo}"
                     """
