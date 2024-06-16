@@ -54,7 +54,9 @@ pipeline {
                     groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "${dbbbuild}" -w "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -a "${appname}"  -o "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -l UTF-8  -h DBB.POC --impactBuild                                    
                     """
                 
-                archiveArtifacts artifacts: "/"${WORKSPACE}"/"${wkDir}"/"${appworkspace}"/*.log"
+                archiveArtifacts artifacts: "/"+"${WORKSPACE}"+"/"+"${wkDir}"+"/"+"${appworkspace}"+"/*.output"
+
+                
                 }
             }
         }
@@ -66,7 +68,7 @@ pipeline {
                     sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${WORKSPACE}/${wkDir}/${appworkspace}"                                      
                 } 
                 
-                archiveArtifacts artifacts: "/"${WORKSPACE}"/"${wkDir}"/"${appworkspace}"/*.output"
+                // archiveArtifacts artifacts: "/"+"${WORKSPACE}"+"/"+"${wkDir}"+"/"+"${appworkspace}"+"/*.output"
             }
         }        
     }   
