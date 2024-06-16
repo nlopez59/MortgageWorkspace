@@ -68,8 +68,7 @@ pipeline {
     
     post {
             always {
-                cd ${wkDir}
-                pwd 
+                                
                 echo 'Uploading Logs ...  ${wkDir}'                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
@@ -78,7 +77,7 @@ pipeline {
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
                // """
-               // archiveArtifacts artifacts: '**/*.log', fingerprint: false                                
-                }
+               archiveArtifacts artifacts: '${WORKSPACE}/${wkDir}/${appworkspace}/*.log', fingerprint: false                                
+            }
     }        
 }
