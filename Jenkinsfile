@@ -26,13 +26,8 @@ pipeline {
                     // Remove build for all runs  - keey last 3
                     // echo "Cleaning up old logs ..."
                     // rm -rf *
-                    // ls -las 
-                    
-                    sh """ 
-
-                    cd   ${wkDir} 
-                    ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf                 
-                    """
+                    // ls -las                     
+                    sh "ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
                 }
             }
         }
