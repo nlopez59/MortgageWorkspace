@@ -53,6 +53,7 @@ pipeline {
                     . /etc/profile 
                     groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "${dbbbuild}" -w "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -a "${appname}"  -o "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -l UTF-8  -h DBB.POC --impactBuild                                    
                     """
+                archiveArtifacts artifacts: '**/*.log' 
                 }
             }
         }
@@ -70,7 +71,7 @@ pipeline {
     post {
             always {
                                 
-                echo "Uploading Logs ...  '${WORKSPACE}/${wkDir}/${appworkspace}/*.log"                    
+                echo "Post step: NopUploading Logs ...  '${WORKSPACE}/${wkDir}/${appworkspace}/*.log"                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
                //     set +x
@@ -78,7 +79,7 @@ pipeline {
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
                // """
-               archiveArtifacts artifacts: '${WORKSPACE}/${wkDir}/${appworkspace}/*.log', fingerprint: false                                
+               //archiveArtifacts artifacts: '${WORKSPACE}/${wkDir}/${appworkspace}/*.log', fingerprint: false                                
             }
     }        
 }
