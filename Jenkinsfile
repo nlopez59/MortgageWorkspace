@@ -54,7 +54,7 @@ pipeline {
                     groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "${dbbbuild}" -w "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -a "${appname}"  -o "${WORKSPACE}"/"${wkDir}"/"${appworkspace}" -l UTF-8  -h DBB.POC --impactBuild                                    
                     """
 
-                    sh " ls -las ${WORKSPACE}/${wkDir}/${appworkspace}/*.log"
+                    sh " ls -las ${WORKSPACE}/${wkDir}/${appworkspace}"
 
                     archiveArtifacts artifacts: "${WORKSPACE}/${wkDir}/${appworkspace}/**.log"
 
