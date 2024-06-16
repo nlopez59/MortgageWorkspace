@@ -34,9 +34,8 @@ pipeline {
                 println '** Clone ' + repo + ' Branch dxc ..' 
                 script {                                        
                     sh """ 
-                        set +x
+                        set -x
                         . /etc/profile 
-                        mkdir -p "${wkDir}"                         
                         cd "${wkDir}"
                         git clone -b dxc "${repo}"
                     """
