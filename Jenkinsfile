@@ -2,7 +2,7 @@
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
 
 def myAgent  = 'dxc'
-def wkDir = '${WORKSPACE}/build_${BUILD_NUMBER}'
+def wkDir = 'build_${BUILD_NUMBER}'
 def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
 def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
 def appworkspace = 'MortgageWorkspace'
@@ -24,9 +24,7 @@ pipeline {
             steps {
                 script {
                     // Remove build for all runs  - keey last 3
-                    // echo "Cleaning up old logs ..."
-                    // rm -rf *
-                    // ls -las                     
+                    echo "Cleaning up old logs ..."
                     sh "ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
                 }
             }
@@ -71,6 +69,8 @@ pipeline {
     
     post {
             always {
+                cd ${wkDir}
+                pwd 
                 echo 'Uploading Logs ...  ${wkDir}'                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
