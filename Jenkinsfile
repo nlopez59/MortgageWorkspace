@@ -23,10 +23,12 @@ pipeline {
             steps {
                 script {
                     // Remove build for all runs  - keey last 3
+                    // echo "Cleaning up old logs ..."
+                    // rm -rf *
+                    // ls -las 
+                    
                     sh """ 
-                    //echo "Cleaning up old logs ..."
-                    //rm -rf *
-                    //ls -las           
+                    pwd           
                     ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf                 
                     """
                 }
@@ -72,7 +74,14 @@ pipeline {
     
     post {
             always {
-                echo 'Uploading Logs ...'                    
+                def buildFolder = env.WORKSPACE
+                echo "The build folder is: ${buildFolder}"
+                
+                // Perform actions with the build folder
+                // For example, list files in the build folder
+                sh "ls -la ${buildFolder}"
+
+                echo 'Uploading Logs ...  ${buildFolder}'                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
                //     set +x
@@ -80,7 +89,7 @@ pipeline {
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
                // """
-                archiveArtifacts artifacts: '**/*.log', fingerprint: false                                
+               // archiveArtifacts artifacts: '**/*.log', fingerprint: false                                
                 }
     }        
 }
