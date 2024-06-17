@@ -66,7 +66,7 @@ pipeline {
             steps {
                 println  '** Publish to UCD ...'                  
                 script {     
-                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${WORKSPACE}/${wkSpace}/${appworkspace}"                                      
+                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  "${env.wkSpace}"                                      
                 } 
                 
                 // archiveArtifacts artifacts: "/"+"${WORKSPACE}"+"/"+"${wkSpace}"+"/"+"${appworkspace}"+"/*.output"
