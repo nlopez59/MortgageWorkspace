@@ -75,9 +75,11 @@ pipeline {
     }   
     
     post {
-            always {
-                                
-                echo "Post step: NopUploading Logs ...  ${env.wkSpace}"
+            always {                                
+                echo "Post step: Uploading Logs ...  ${env.wkSpace}"               
+                archiveArtifacts artifacts: "${env.wkSpace}/**.log",  fingerprint: false                               
+                
+               // Sample newcopy during builds  
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
                //     set +x
@@ -86,7 +88,6 @@ pipeline {
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
                // """
                //archiveArtifacts artifacts: '${WORKSPACE}/${wkSpace}/${appworkspace}/*.log', fingerprint: false  
-                archiveArtifacts artifacts: ${env.wkSpace}"/**.log"                              
             }
     }        
 }
