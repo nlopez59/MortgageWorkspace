@@ -55,7 +55,7 @@ pipeline {
                     """
 
                     sh " ls -las ${WORKSPACE}/${wkDir}/${appworkspace}"
-                    archiveArtifacts artifacts: $wkDir"/**/**.log"
+                    archiveArtifacts artifacts: wkDir"/**/**.log"
 
 
                 }
