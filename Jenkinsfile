@@ -24,8 +24,8 @@ pipeline {
             steps {
                 script {                            
                     // Define an environment variable
-                    env.wkDir = "build_${BUILD_NUMBER}/${appworkspace}" 
-                    echo "Set Env Var wkDir=${env.wkDir}"
+                    env.wkSpace = "${WORKSPACE}/build_${BUILD_NUMBER}/${appworkspace}" 
+                    echo "Set Env Var wkSpace=${env.wkSpace}"
 
 
                     // Remove build across all runs  - keep last 3
@@ -56,8 +56,8 @@ pipeline {
                     sh """
                         set +x
                         . /etc/profile 
-                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkDir}  -a ${appname}  -o ${env.wkDir} -l UTF-8  -h DBB.POC --impactBuild
-                        archiveArtifacts artifacts: "${env.wkDir}/**.log"
+                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkSpace}  -a ${appname}  -o ${env.wkSpace} -l UTF-8  -h DBB.POC --impactBuild
+                        archiveArtifacts artifacts: "${env.wkSpace}/**.log"
                     """
 
                 }
@@ -68,10 +68,10 @@ pipeline {
             steps {
                 println  '** Publish to UCD ...'                  
                 script {     
-                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${WORKSPACE}/${wkDir}/${appworkspace}"                                      
+                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${WORKSPACE}/${wkSpace}/${appworkspace}"                                      
                 } 
                 
-                // archiveArtifacts artifacts: "/"+"${WORKSPACE}"+"/"+"${wkDir}"+"/"+"${appworkspace}"+"/*.output"
+                // archiveArtifacts artifacts: "/"+"${WORKSPACE}"+"/"+"${wkSpace}"+"/"+"${appworkspace}"+"/*.output"
             }
         }        
     }   
@@ -79,7 +79,7 @@ pipeline {
     post {
             always {
                                 
-                echo "Post step: NopUploading Logs ...  '${WORKSPACE}/${wkDir}/${appworkspace}/*.log"                    
+                echo "Post step: NopUploading Logs ...  '${WORKSPACE}/${wkSpace}/${appworkspace}/*.log"                    
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
                //     set +x
@@ -87,7 +87,7 @@ pipeline {
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
                // """
-               //archiveArtifacts artifacts: '${WORKSPACE}/${wkDir}/${appworkspace}/*.log', fingerprint: false                                
+               //archiveArtifacts artifacts: '${WORKSPACE}/${wkSpace}/${appworkspace}/*.log', fingerprint: false                                
             }
     }        
 }
