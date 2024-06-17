@@ -24,11 +24,11 @@ pipeline {
             steps {
                 script {                            
                     // Define an environment variable
-                    env.wkDir = "/build_${BUILD_NUMBER}/${appworkspace}" 
+                    env.wkDir = "build_${BUILD_NUMBER}/${appworkspace}" 
                     echo "Set Env Var wkDir=${env.wkDir}"
 
 
-                    // Remove build for all runs  - keey last 3
+                    // Remove build across all runs  - keep last 3
                     echo "Cleaning up old logs ..."
                     sh "ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
                 }
@@ -54,11 +54,11 @@ pipeline {
                 println  "** Building with DBB in Impact Mode ... "
                 script { 
                     sh """
-                    set +x
-                    . /etc/profile 
-                    groovyz -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 "${dbbbuild} -w ${env.wkDir}  -a ${appname}  -o ${env.wkDir} -l UTF-8  -h DBB.POC --impactBuild"
-                    archiveArtifacts artifacts: "${env.wkDir}/**.log"
-
+                        set +x
+                        . /etc/profile 
+                        groovyz " -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkDir}  -a ${appname}  -o ${env.wkDir} -l UTF-8  -h DBB.POC --impactBuild"
+                        archiveArtifacts artifacts: "${env.wkDir}/**.log"
+                    """
 
                 }
             }
