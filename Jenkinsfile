@@ -28,13 +28,11 @@ pipeline {
         stage('Pre Actions') {
             steps {
                 script {                                        
-                    echo "Pre-Step: Cleaning up old logs ..."                                        
+                    echo "Pre-Step: Cleaning up old logs and set woriking Dir ..."                                        
                     sh "set +x; ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
-
 
                     env.wkSpace = "${WORKSPACE}/build_${BUILD_NUMBER}/${appworkspace}" 
                     echo "Set Env Var wkSpace=${env.wkSpace}"
-
                 }
             }
         }
