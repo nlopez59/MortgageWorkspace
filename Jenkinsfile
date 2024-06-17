@@ -56,7 +56,7 @@ pipeline {
                     sh """
                         set +x
                         . /etc/profile 
-                        groovyz " -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkDir}  -a ${appname}  -o ${env.wkDir} -l UTF-8  -h DBB.POC --impactBuild"
+                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkDir}  -a ${appname}  -o ${env.wkDir} -l UTF-8  -h DBB.POC --impactBuild
                         archiveArtifacts artifacts: "${env.wkDir}/**.log"
                     """
 
