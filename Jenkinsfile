@@ -76,9 +76,9 @@ pipeline {
     
     post {
             always {                                
-                echo "Post step: Uploading Logs ...  ${env.wkSpace}"               
-                archiveArtifacts artifacts: "${env.wkSpace}/**.log",  fingerprint: false                               
-                
+                echo "Post step: Uploading Logs ... "                               
+                archiveArtifacts artifacts: "/build_${BUILD_NUMBER}/**/**.log",  fingerprint: false                               
+
                // Sample newcopy during builds  
                // echo 'CICS Newcopy and uploading Logs ...'                    
                // sh """
