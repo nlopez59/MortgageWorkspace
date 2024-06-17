@@ -5,11 +5,10 @@
 // The zOS Jenkins in-bound Agent name 
 def myAgent  = 'dxc'
 
-//* The app repo and working dir
+//* The app repo abd DBB args 
 def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
 def appworkspace = 'MortgageWorkspace'
 def appname = 'MortgageApplication'
-def wkSpace = "${WORKSPACE}/build_${BUILD_NUMBER}/${appworkspace}" 
 
 // Location of the DBB build script 
 def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
@@ -31,6 +30,11 @@ pipeline {
                 script {                                        
                     echo "Pre-Step: Cleaning up old logs ..."                                        
                     sh "set +x; ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
+
+
+                    env.wkSpace = "${WORKSPACE}/build_${BUILD_NUMBER}/${appworkspace}" 
+                    echo "Set Env Var wkSpace=${env.wkSpace}"
+
                 }
             }
         }
@@ -56,7 +60,7 @@ pipeline {
                     sh """
                         set +x
                         . /etc/profile 
-                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${wkSpace}  -a ${appname}  -o ${wkSpace} -l UTF-8  -h DBB.POC --impactBuild                        
+                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkSpace}  -a ${appname}  -o ${env.wkSpace} -l UTF-8  -h DBB.POC --impactBuild                        
                     """                 
                 }
             }
@@ -66,7 +70,7 @@ pipeline {
             steps {
                 println  '** Publishing to UCD ...'                  
                 script {     
-                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${wkSpace}"                                      
+                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${env.wkSpace}"                                      
                 }                 
             }
         }        
