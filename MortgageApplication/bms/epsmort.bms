@@ -33,10 +33,10 @@ EPDIFF2  DFHMDF POS=(17,15),LENGTH=22,INITIAL='Monthly Payment: ',     *
 EPPAYMNT DFHMDF POS=(17,42),LENGTH=12,                                 *
                ATTRB=(PROT,NORM),HILIGHT=OFF,COLOR=YELLOW
 MSGERR  DFHMDF POS=(24,15),ATTRB=(PROT,NORM),LENGTH=40,                X00340000
-               INITIAL='Hi'                                             00350000
+               INITIAL=' ' 
          DFHMDF POS=(2,48),LENGTH=0,                                   *
                ATTRB=ASKIP
-         DFHMDF POS=(5,25),LENGTH=26,INITIAL='arc132    MORT CALC',    *
-               ATTRB=(ASKIP,BRT)
-EPSMORT  DFHMSD TYPE=FINAL                                               0036000
-        END                                                             00370000
+         DFHMDF POS=(5,25),LENGTH=26,ATTRB=(ASKIP,BRT),                *  
+               INITIAL='arch 4 MORT CALC' 
+EPSMORT  DFHMSD TYPE=FINAL  
+        END                 
