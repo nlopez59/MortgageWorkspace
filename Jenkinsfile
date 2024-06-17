@@ -2,41 +2,41 @@
 // for help: https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
 // Note: can double ref a $ var in the the arc step  
 
+// The zOS Jenkins in-bound Agent name 
 def myAgent  = 'dxc'
+
+//* The app repo and working dir
 def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
-def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
 def appworkspace = 'MortgageWorkspace'
 def appname = 'MortgageApplication'
+def wkSpace = "${WORKSPACE}/build_${BUILD_NUMBER}/${appworkspace}" 
+
+// Location of the DBB build script 
+def dbbbuild ='/u/ibmuser/dbb-zappbuild/build.groovy'
 
 
-
-//def ucdPublish = '/u/ibmuser/waziDBB/dbb-v2/dbb-zappbuild/scripts/UCD/dbb-ucd-packaging.groovy' 
+// Location of UCD agent and application component name 
 def ucdPublish = '/u/ibmuser/dbb-zappbuild/scripts/CD/UCD_Pub.sh'
 def buzTool  = '/u/ibmuser/ibm-ucd/bin/buztool.sh'
 def ucdComponent = 'dxc-component'
 
-// no changes required to this section 
+
+
 pipeline {
     agent   { label myAgent } 
     options { skipDefaultCheckout(true) }       
     stages  {
         stage('Pre Actions') {
             steps {
-                script {                            
-                    // Define an environment variable
-                    env.wkSpace = "${WORKSPACE}/build_${BUILD_NUMBER}/${appworkspace}" 
-                    echo "Set Env Var wkSpace=${env.wkSpace}"
-
-
-                    // Remove build across all runs  - keep last 3
-                    echo "Cleaning up old logs ..."
-                    sh "ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
+                script {                                        
+                    echo "Pre-Step: Cleaning up old logs ..."                                        
+                    sh "set +x; ls  -tD  |  awk 'NR>3'  |  xargs -L1 rm -Rf  "
                 }
             }
         }
         stage('Clone') {
             steps {
-                println '** Clone ' + repo + ' Branch dxc ..' 
+                println '** Cloning ' + repo + ' Branch dxc ...' 
                 script {                                        
                     sh """ 
                         set +x
@@ -51,12 +51,12 @@ pipeline {
 
         stage('Build') {
             steps {
-                println  "** Building with DBB in Impact Mode ... "
+                println  "** Building with DBB ... "
                 script { 
                     sh """
                         set +x
                         . /etc/profile 
-                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${env.wkSpace}  -a ${appname}  -o ${env.wkSpace} -l UTF-8  -h DBB.POC --impactBuild                        
+                        groovyz  -DBB_DAEMON_HOST 127.0.0.1 -DBB_DAEMON_PORT 8180 ${dbbbuild} -w ${wkSpace}  -a ${appname}  -o ${wkSpace} -l UTF-8  -h DBB.POC --impactBuild                        
                     """                 
                 }
             }
@@ -64,20 +64,19 @@ pipeline {
 
         stage('Stage for Deploy') {
             steps {
-                println  '** Publish to UCD ...'                  
+                println  '** Publishing to UCD ...'                  
                 script {     
-                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${env.wkSpace}"                                      
-                } 
-                
-                // archiveArtifacts artifacts: "/"+"${WORKSPACE}"+"/"+"${wkSpace}"+"/"+"${appworkspace}"+"/*.output"
+                    sh ucdPublish + " Jenkins_Build_${BUILD_NUMBER} " + ucdComponent +  " ${wkSpace}"                                      
+                }                 
             }
         }        
     }   
     
     post {
             always {                                
-                echo "Post step: Uploading Logs ... "                               
+                echo "Post step: Uploading DBB Logs and UCD Ouptut ... "                               
                 archiveArtifacts artifacts: "build_${BUILD_NUMBER}/**/**.log",  fingerprint: false                               
+                archiveArtifacts artifacts: "build_${BUILD_NUMBER}/**/**.output",  fingerprint: false                               
 
                // Sample newcopy during builds  
                // echo 'CICS Newcopy and uploading Logs ...'                    
@@ -86,8 +85,7 @@ pipeline {
                //     . /etc/profile 
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSMORT)  PH" > /dev/null 2>&1
                //     opercmd "F CICSTS61,CEMT SET PROG(EPSCMORT) PH" > /dev/null 2>&1
-               // """
-               //archiveArtifacts artifacts: '${WORKSPACE}/${wkSpace}/${appworkspace}/*.log', fingerprint: false  
+               // """               
             }
     }        
 }
