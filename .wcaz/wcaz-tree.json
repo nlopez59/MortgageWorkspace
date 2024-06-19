@@ -1,0 +1,17 @@
+{
+  "MortgageApplication": {
+    "expand": 2,
+    "scan": false,
+    "exclude": [],
+    "files": {
+      "cobol": {
+        "expand": 2,
+        "scan": false,
+        "exclude": [],
+        "files": {
+          "epscmort.cbl": {}
+        }
+      }
+    }
+  }
+}

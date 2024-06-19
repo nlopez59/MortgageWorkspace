@@ -37,6 +37,6 @@ MSGERR  DFHMDF POS=(24,15),ATTRB=(PROT,NORM),LENGTH=40,                X00340000
          DFHMDF POS=(2,48),LENGTH=0,                                   *
                ATTRB=ASKIP
          DFHMDF POS=(5,25),LENGTH=26,ATTRB=(ASKIP,BRT),                *  
-               INITIAL='IBM  MORT CALC ' 
+               INITIAL='IBM  MORT CALC V2' 
 EPSMORT  DFHMSD TYPE=FINAL  
         END                 
