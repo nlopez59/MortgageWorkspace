@@ -5,9 +5,10 @@
 // The zOS Jenkins in-bound Agent name
 def myAgent  = 'dxc'
  
-//* The app repo abd DBB args
+//* The app repo abd DBB args - test with https 
 
-def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
+//def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
+def repo = 'https://github.com/nlopez1-ibm/MortgageWorkspace.git'
 //def repo = 'git@github.com:gandalf68000/MortgageWorkspace.git'
  
 def appworkspace = 'MortgageWorkspace'
