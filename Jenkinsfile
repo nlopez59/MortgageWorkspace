@@ -7,7 +7,7 @@ def myAgent  = 'dxc'
  
 //* The app repo abd DBB args - test with https 
 
-//def repo = 'git@github.com:nlopez1-ibm/MortgageWorkspace.git'
+//* Careful not to add leading spaces
 def repo = 'https://github.com/nlopez1-ibm/MortgageWorkspace.git'
 //def repo = 'git@github.com:gandalf68000/MortgageWorkspace.git'
  
@@ -49,9 +49,8 @@ pipeline {
                     sh """
                         set +x
                         . /etc/profile
-                        mkdir -p "build_${BUILD_NUMBER}"
-                        cd "build_${BUILD_NUMBER}"
-                        git clone "${repo}" 
+                        mkdir -p "build_${BUILD_NUMBER}"                        
+                        git clone -b "${branch} ${repo} build_${BUILD_NUMBER}"
                     """
                 }
             }          
