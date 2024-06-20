@@ -47,11 +47,11 @@ pipeline {
                 println '** Cloning ' + repo + ' Branch dxc ...'
                 script {                                        
                     sh """
-                        set -x
+                        set +x
                         . /etc/profile
                         mkdir -p "build_${BUILD_NUMBER}"
                         cd "build_${BUILD_NUMBER}"
-                        git clone -b  " ${branch}  ${repo} " 
+                        git clone " ${repo} " 
                     """
                 }
             }          
