@@ -49,8 +49,9 @@ pipeline {
                     sh """
                         set +x
                         . /etc/profile
-                        mkdir -p "build_${BUILD_NUMBER}"                        
-                        git clone -b "${branch} ${repo} build_${BUILD_NUMBER}"
+                        mkdir -p "build_${BUILD_NUMBER}"
+                        cd "build_${BUILD_NUMBER}"
+                        git clone -b "${branch} ${repo}" 
                     """
                 }
             }          
